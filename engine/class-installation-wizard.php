@@ -40,11 +40,12 @@ class Installation_Wizard {
      * Setup form with proper field configuration
      */
     private function setup_form() {
-        if(!empty($_SESSION['wizard_form_config'])) {
-            // $this->form = unserialize($_SESSION['wizard_form']);
-            $form_config = unserialize($_SESSION['wizard_form_config']);
-            // Use session form to preserve config between pages
-        }
+        // if(!empty($_SESSION['wizard_form_config'])) {
+        //     // $this->form = unserialize($_SESSION['wizard_form']);
+        //     $form_config = unserialize($_SESSION['wizard_form_config']);
+        //     // Use session form to preserve config between pages
+        // }
+        $form_config = is_string($_SESSION['wizard_form_config']) ? unserialize($_SESSION['wizard_form_config']) : null;
 
         if(empty($form_config) || ! is_array($form_config)) {
             $grid_name = OpenSim::grid_name();
@@ -599,22 +600,56 @@ class Installation_Wizard {
                     // Theorically, if we reach this point, minimal validation has been done, we can proceed.
                     break;
                 case 'import_legacy':
-                    // TODO: run contants import, minimal config validation and load as work config
-                    $errors[] = 'DEBUG config_method ' . $config_method . ' validation not implemented yet';
+                    // TODO: run constants import, minimal config validation and load as work config
+                    $errors[] = '[DEBUG] config_method ' . $config_method . ' validation not implemented yet';
                     break;
                 case 'ini_import':
-                    $errors[] = '[DEBUG] config_method ' . $config_method . ' validation not implemented yet';
                     if(empty($submitted_data['robust_ini']['path']) && empty($submitted_data['robust_ini']['upload'])) {
                         $errors[] = _('Please fill the Robust(.HG).ini file path or upload a file');
-                        $field_errors['robust_ini_path'] = _('Please provide at least one .ini file path');
+                        $field_errors['robust_ini'] = _('Please provide at least one .ini file path');
                     } else {
-                        // TODO: load ini file, check it's thhe right kine of config (presence of certain sections
-                        // depending on the config type, check provided by another method), load as work config
-                        $errors[] = '[DEBUG] config_method ' . $config_method . ' validation not implemented yet';
+                        // Get the ini file path (either uploaded or server path)
+                        
+                        $ini_path = $submitted_data['robust_ini']['path'] ?? $submitted_data['robust_ini']['upload'] ?? null;
+                        
+                        if($ini_path && file_exists($ini_path)) {
+                            try {
+                                // Use existing OpenSim_Ini class to parse and validate
+                                $ini = new OpenSim_Ini($ini_path);
+                                $config = $ini->get_config();
+                                
+                                if(empty($config)) {
+                                    $errors[] = _('Error parsing ini file');
+                                    $field_errors['robust_ini'] = _('Could not parse the ini file');
+                                } else {
+                                    // Validate it's a proper Robust config file
+                                    $required_sections = ['DatabaseService', 'GridInfoService', 'LoginService'];
+                                    $missing_sections = array_diff($required_sections, array_keys($config));
+                                    
+                                    if(!empty($missing_sections)) {
+                                        $errors[] = sprintf(_('Missing required sections in config file: %s'), implode(', ', $missing_sections));
+                                        $field_errors['robust_ini'] = _('Not a valid Robust configuration file');
+                                    } else {
+                                        // Set imported config for Engine_Settings to use
+                                        Engine_Settings::set_imported_options($config);
+
+                                        // Clear cached form config so it regenerates with imported data
+                                        // unset($_SESSION['wizard_form_config']);
+                                    }
+                                }
+                            } catch(Throwable $e) {
+                                $errors[] = sprintf(_('Error reading ini file: %s'), $e->getMessage());
+                                $field_errors['robust_ini'] = _('Could not read or parse the ini file');
+                            }
+                        } else {
+                            $errors[] = _('Ini file not found');
+                            $field_errors['robust_ini'] = _('File not found');
+                        }
                     }
                     break;
                 case 'start_fresh':
-                    // TODO: make sure to unload any work config so next page doesn't contain random/unrelated alues
+                    // to unload any work config so next page doesn't contain random/unrelated alues
+                    unset($_SESSION['wizard_form_config']);
                     $errors[] = '[DEBUG] config_method ' . $config_method . ' validation not implemented yet';
                     break;
                 default:
