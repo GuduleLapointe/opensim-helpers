@@ -1,0 +1,10 @@
+# Deny all web access to bin/ directory
+# This directory contains executable files that should not be accessible via web
+
+Require all denied
+
+# For older Apache versions (< 2.4)
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>

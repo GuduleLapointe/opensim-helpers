@@ -1,0 +1,10 @@
+# Deny all web access to lib/ directory
+# This directory contains library files, templates, and modules that should not be accessible via web
+
+Require all denied
+
+# For older Apache versions (< 2.4)
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>

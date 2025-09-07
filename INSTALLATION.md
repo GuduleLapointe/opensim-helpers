@@ -2,10 +2,9 @@
 
 If you only need in-world search (places, land for sale, events), do not install the helpers, follow "Option 1" instructions in README.md to use 2do.directory service instead.
 
-If you use w4os WordPress plugin, you do not need to install helpers, they are already provided by the plugin.
+If you use [w4os WordPress plugin](https://w4os.org), you do not need to install helpers, they are already provided by the plugin.
 
 Proceed to full installation if you have at least one of these requirements
-- you need to implement in-world currency
 - you need to implement classifieds
 - you prefer to implement your own search engine
 
@@ -40,6 +39,29 @@ Optional:
 - search settings
 - currency settings
 
+## IMPORTANT: Configure web server to protect sensitive directories
+
+For security reasons, the `bin/` and `lib/` directories should not be accessible via web:
+- `bin/` contains executable files
+- `lib/` contains library files, templates, and OpenSimulator modules
+
+**Apache2**: `.htaccess` files are already provided in both directories to deny web access.
+
+**Nginx**: Add this to your server configuration:
+```nginx
+location ~ ^/helpers/(bin|lib)/ {
+    deny all;
+}
+```
+
+**Caddy**: Add this to your Caddyfile:
+```caddy
+respond /helpers/bin/ 403
+respond /helpers/bin/* 403
+respond /helpers/lib/ 403
+respond /helpers/lib/* 403
+```
+
 ### Database Configuration
 
 The helpers need access to various databases. You can use the same database as your Robust installation for everything, but for better security and organization, you might want to use separate databases:
@@ -60,7 +82,7 @@ Use cron or crontab to trigger the database update on a regular basis
 
 ## Install required OpenSim modules (dll)
 
-According to your needs, copy modules provided in addons/bin in your opensim bin/ directory (alongside Robust.exe) or download them from their original authors.
+According to your needs, copy modules provided in lib/ in your opensim bin/ directory (alongside Robust.exe) or download them from their original authors.
 
 **Only copy the modules you actually need**: some of them might crash your simulator if not configured.
 
