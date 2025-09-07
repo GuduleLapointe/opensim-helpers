@@ -133,10 +133,10 @@ class OSPDO extends PDO {
         $trace = $trace['file'] . ':' . $trace['line'];
 
         $statement = $this->prepare($query, $options);
-        $result = $statement->execute($params);
+        $success = $statement->execute($params);
 
-        if ($result) {
-            return $result;
+        if ($success) {
+            return $statement;
         }
 
         error_log('Error ' . $statement->errorCode() . ' ' . $statement->errorInfo()[2] . ' ' . $trace);
@@ -243,62 +243,6 @@ class OSPDO extends PDO {
         }
         return true;
     }
-
-    /**
-     * Convert .NET connection string to array format
-     * 
-     * @param string $connectionstring .NET connection string
-     * @return array Array with keys: saveformat, type, host, port, name, user, pass
-     */
-	public static function connectionstring_to_array( $connectionstring, $provider = 'mysql' ) {
-        if(is_array($connectionstring)) {
-            // If already an array, just return it
-            return $connectionstring;
-        }
-		$parts = explode( ';', $connectionstring );
-		$creds = array();
-		foreach ( $parts as $part ) {
-			if (empty(trim($part))) continue; // Skip empty parts
-			$pair              = explode( '=', $part, 2 ); // Limit to 2 parts in case value contains =
-			if (count($pair) === 2) {
-				$creds[ trim($pair[0]) ] = trim($pair[1]);
-			}
-		}
-        if( preg_match( '/:[0-9]+$/', $creds['Data Source'] ?? '' ) ) {
-            $host = explode( ':', $creds['Data Source'] );
-            $creds['Data Source'] = $host[0];
-            $creds['Port'] = empty( $host[1] ) || $host[1] == 3306 ? null : $host[1];
-        }
-        switch ( $provider ) {
-            // TODO: test pgsql before enabling
-
-            // case 'OpenSim.Data.PGSQL.dll':
-            // case 'pgsql':
-            // case 'postgres':
-            // case 'postgresql':
-            // case 'posql':
-            //     $type = 'pgsql';
-            //     // PostgreSQL specific handling if needed
-            //     break;
-
-            case 'OpenSim.Data.MySQL.dll':
-            case 'mysql':
-            default:
-                $type = 'mysql';
-        }
-
-        $result = array(
-            'type' => $type,
-            'host' => $creds['Data Source'] ?? '',
-            'port' => $creds['Port'] ?? null,
-            'name' => $creds['Database'] ?? '',
-            'user' => $creds['User ID'] ?? '',
-            'pass' => $creds['Password'] ?? '',
-            'saveformat' => 'connection_string',
-            'ConnectionString' => $connectionstring, // Preserve original for reference
-        );
-		return $result;
-	}
 
     // Version from Helpers, probably not better than the one above
 	// public static function connectionstring_to_array( $connectionstring ) {
