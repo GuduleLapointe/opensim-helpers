@@ -68,7 +68,13 @@ class Engine_Settings {
      * @return void
      */
     public static function init() {
-        self::$config_dir = OPENSIM_ENGINE_PATH . '/config';
+        if(defined('OPENSIM_CONFIG_DIR')) {
+            self::$config_dir = OPENSIM_CONFIG_DIR;
+        } else {
+            self::$config_dir = __DIR__ . '/config';
+            define('OPENSIM_CONFIG_DIR', self::$config_dir);
+        }
+
         self::$credentials_file = self::$config_dir . '/credentials.json';
 
         self::ensure_config_directory();

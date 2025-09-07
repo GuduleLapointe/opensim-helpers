@@ -8,4 +8,3 @@ tmp/
 *.temp
 *.tmp
 /config/*
-!/config/.htaccess

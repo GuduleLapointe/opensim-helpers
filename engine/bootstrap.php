@@ -9,10 +9,13 @@
  * So nothing in engine can depend or rely on a parent project like WordPress or Helpers.
  */
 
-// Prevent direct access
-if (!defined('ABSPATH') && !defined('OPENSIM_ENGINE')) {
-    exit;
+// Prevent direct access without using constant
+if (realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'])) {
+    http_response_code(403);
+    exit('Direct access not permitted.');
 }
+
+define('OPENSIM_ENGINE', true); // Weird to set it here but it's checked by engine to allow loading
 
 // Define engine constants
 if (!defined('OPENSIM_ENGINE_PATH')) {
@@ -48,7 +51,7 @@ require_once OPENSIM_ENGINE_PATH . '/includes/functions.php';
 // }
 
 // Load ONLY core classes that are always used
-// require_once OPENSIM_ENGINE_PATH . '/class-ini.php';
+require_once OPENSIM_ENGINE_PATH . '/class-ini.php';
 require_once OPENSIM_ENGINE_PATH . '/class-engine-exceptions.php';
 require_once OPENSIM_ENGINE_PATH . '/class-engine-settings.php';
 // require_once OPENSIM_ENGINE_PATH . '/class-installation-wizard.php';

@@ -7,12 +7,15 @@
  */
 
 // Define helper mode
-define('OPENSIM_ENGINE', true); // Weird to set it here but it's checked by engine to allow loading
 define('OPENSIM_HELPERS', true);
-
 if(!defined('OPENSIM_HELPERS_PATH')) {
     // Define the path to helpers directory
     define('OPENSIM_HELPERS_PATH', __DIR__);
+}
+
+if(!defined('OPENSIM_CONFIG_DIR')) {
+    // Define the path to config directory
+    define('OPENSIM_CONFIG_DIR', OPENSIM_HELPERS_PATH . '/config');
 }
 
 require_once OPENSIM_HELPERS_PATH . '/engine/bootstrap.php';

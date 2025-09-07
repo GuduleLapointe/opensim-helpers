@@ -11,3 +11,4 @@ wp-load.php
 *.temp
 *.tmp
 *.cache
+config/**
