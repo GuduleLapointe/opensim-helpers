@@ -104,7 +104,7 @@ class Installation_Wizard {
                                         'enable' => empty($configured),
                                         'fields' => array(
                                             'robust_ini' => array(
-                                                'type' => 'file-ini',
+                                                'type' => 'ini_files',
                                                 // 'label' => _('Robust(.HG).ini file'),
                                                 'required' => true,
                                                 'description' => '<ul><li>' . join('</li><li>', array(
