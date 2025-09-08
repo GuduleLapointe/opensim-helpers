@@ -1,93 +1,34 @@
-# OpenSim Helpers Test Suite
+# W4OS Plugin Testing
 
-This directory contains PHPUnit tests for the OpenSim Helpers scripts.
-
-## Setup
-
-1. Install PHPUnit dependencies:
-```bash
-composer install --dev
-```
-
-2. Configure your OpenSim settings using `Engine_Settings` before running tests.
-
-3. Ensure your web server can access the helpers scripts at the configured base URL.
+This directory contains the testing environment, using a simple PHP test runner approach.
 
 ## Running Tests
 
-Run all tests with clean summary:
+To run all tests:
+
 ```bash
-composer test
+./tests/run-tests.php   # Abort remaining tests if a required test group fails
 ```
 
-Run with PHPUnit directly (verbose):
+To run individual test groups:
+
 ```bash
-composer run test-phpunit
+php ./tests/test-00-dependencies-required.php
+php ./tests/test-02-some-test.php               
+php ./tests/test-some-other-test-.php
 ```
 
-Run specific test class:
-```bash
-vendor/bin/phpunit tests/QueryTest.php
-```
+## Test Structure
 
-## Test Execution Order
+- **`bootstrap.php`** - Loads WordPress and provides SimpleTest framework
+- **`run-tests.php`** - Main test runner that executes all test-*.php files in order with requirement checking
+- **`test-00-dependencies-required.php`** - System dependency tests (PHP extensions, server requirements) - REQUIRED
 
-1. **Prerequisites Test**: Runs first and validates:
-   - Robust database connectivity
-   - Grid online status (get_grid_info endpoint)
-   - Helpers accessibility
-   
-   If prerequisites fail, all other tests are skipped.
+*Tests with "-required" suffix must pass for subsequent tests to run. Optional tests like `test-profile.php` will run regardless of other test outcomes.*
 
-2. **Main Test Suite**: Runs only if prerequisites pass
+## Test Approach
 
-## Test Output
-
-The custom test runner provides:
-- Real-time progress indicators (., F, S)
-- Clean summary with one line per test
-- Pass/Fail/Skip status with symbols (✅/❌/⚠️)
-- Brief error messages for failed tests
-- Final statistics
-
-Example output:
-```
-✅ Prerequisites::Database Connectivity     PASS
-✅ QueryTest::testPlacesQueryWithValidRequest PASS
-❌ CurrencyTest::testCurrencyQuoteRequest    FAIL
-⚠️  GuideTest::testGuideAccessibility        SKIP
-
-Total: 25, Passed: 20, Failed: 2, Skipped: 3
-```
-
-## Test Coverage
-
-- **QueryTest**: Search functionality (query.php)
-- **CurrencyTest**: Virtual currency operations (currency.php) 
-- **OfflineTest**: Offline messaging (offline.php)
-- **RegisterTest**: Search registration (register.php)
-- **LandtoolTest**: Land management (landtool.php)
-- **GuideTest**: Destination guide (guide.php)
-- **ParserTest**: Data parsing (parser.php, eventsparser.php)
-- **SplashTest**: Basic configuration (splash.php)
-
-## Configuration Requirements
-
-Tests may be skipped if required services are not configured:
-
-- **Database tests**: Require `robust.DatabaseService.ConnectionString`
-- **Search tests**: Require search database configuration
-- **Events tests**: Require `engine.Search.HypeventsUrl`
-- **Currency tests**: Require currency system configuration
-
-## Test Environment
-
-Tests use the `OpenSimHelpersTestCase` base class which provides:
-
-- HTTP request helpers for testing scripts
-- XMLRPC request/response handling
-- UUID generation for test data
-- Configuration validation
-- Response assertion helpers
-
-Tests are designed to be non-destructive and use test data where possible.
+- **No PHPUnit required** - Uses plain PHP with a simple test framework
+- **Tests against live WordPress** - Uses your actual WordPress installation instead of a separate test environment
+- **Environment-aware** - Tests with all your plugins, configuration, and OpenSim setup intact
+- **Requirement-based execution** - Tests with "-required" suffix must pass before subsequent tests run

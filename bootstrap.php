@@ -41,17 +41,6 @@ spl_autoload_register(function ($class) {
 // require_once OPENSIM_HELPERS_PATH . '/includes/class-search-helper.php';
 // require_once OPENSIM_HELPERS_PATH . '/includes/class-profile-helper.php';
 
-// Deprecation notice: setting will be handled by Engine_Settings in next release.
-if( file_exists( OPENSIM_HELPERS_PATH . '/includes/config.php' ) ) {
-    // Load configuration if exists
-    try {
-        @require_once OPENSIM_HELPERS_PATH . '/includes/config.php';
-    } catch (Throwable $e) {
-        // Handle error if config file fails to load, but don't die.
-        // error_log('[ERROR] ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-    }
-}
-
 require_once OPENSIM_HELPERS_PATH . '/classes/class-helpers.php';
 
 // Move to autoloader (only loaded when used):
