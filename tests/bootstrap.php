@@ -143,6 +143,75 @@ class SimpleTest {
         return false;
     }
 
+    public function assert_valid_form( $content, $expected_form_id, $expected_fields, $expected_values) {
+        // Parse the HTML to verify it's the initial config step
+        $parsed_html = SimpleTest::parse_html($content);
+        if (!$this->assert_true($parsed_html !== false, "  HTML parsed")) {
+            return false;
+        }
+
+        $xpath = new DOMXPath($parsed_html);
+
+        // Extract and display any error messages from the page
+        $error_elements = $xpath->query('//div[contains(@class, "alert-danger")]');
+        if (!$this->assert_equals(0, $error_elements->length, "  Error messages")) {
+            $errors = array();
+            foreach ($error_elements as $error_element) {
+                $error_text = trim($error_element->textContent);
+                if (!empty($error_text)) {
+                    echo "    - " . $error_text . PHP_EOL;
+                }
+            }
+            return false;
+        }
+
+        // Check for config_method field with ini_import option
+        $form_id = $xpath->query('//form')->item(0)->id;
+
+        if(!$this->assert_equals($expected_form_id, $form_id, "  Form ID")) {
+            return false;
+        }
+
+        foreach($expected_values as $field_name => $expected_value) {
+            $field = $xpath->query(sprintf('//input[@name="%s"] | //select[@name="%s"]', $field_name, $field_name))->item(0);
+            if($field === null) {
+                continue; // Already reported missing
+            }
+            $actual_value = '';
+            if($field->tagName === 'input') {
+                $actual_value = $field->getAttribute('value') ?? '';
+            } elseif($field->tagName === 'select') {
+                $selected_option = $xpath->query('.//option[@selected]', $field)->item(0);
+                if($selected_option) {
+                    $actual_value = $selected_option->getAttribute('value') ?? '';
+                }
+            }
+            if(!$this->assert_equals($expected_value, $actual_value, "  Field '$field_name' value")) {
+                $invalid[] = $field_name;
+            }
+        }
+        if(!empty($invalid)) {
+            echo "   ❌ Field value mismatches: " . implode(', ', $invalid) . ", aborting tests." . PHP_EOL;
+            return false;
+        }
+
+        $missing = [];
+        foreach ($expected_fields as $field_name) {
+            $field = $xpath->query(sprintf('//input[@name="%s"] | //select[@name="%s"]', $field_name, $field_name))->item(0);
+            if($field === null) {
+                $missing[] = $field_name;
+                continue;
+            }
+        }
+
+        if(!$this->assert_true(empty($missing), "  Required fields" . (!empty($missing) ? ' (missing: ' . implode(', ', $missing) . ')' : ''))) {
+            echo "   ❌ Missing fields: " . implode(', ', $missing) . ", aborting tests." . PHP_EOL;
+            exit($this->summary() ? 0 : 1);
+        }
+
+        return true;
+    }
+
     public function get_stats() {
 		return array(
 			'run' => $this->tests_run,
@@ -352,6 +421,150 @@ class SimpleTest {
             'html_length' => strlen($html_content)
         );
     }
+}
+
+/**
+ * Test Server Management Functions
+ */
+
+// Global variables to track server state
+$_test_server_pid = null;
+$_test_server_port = null;
+$_test_server_base_url = null;
+
+/**
+ * Find the first available port starting from a given port
+ */
+function find_available_port($start_port = 8080) {
+    for ($port = $start_port; $port <= 65535; $port++) {
+        $socket = @fsockopen('127.0.0.1', $port, $errno, $errstr, 1);
+        if (!$socket) {
+            return $port; // Port is available
+        }
+        fclose($socket);
+    }
+    return false; // No available port found
+}
+
+/**
+ * Start a PHP test server for testing
+ */
+function start_test_server($document_root = null) {
+    global $_test_server_pid, $_test_server_port, $_test_server_base_url;
+    
+    if ($_test_server_pid !== null) {
+        echo "Test server already running on port $_test_server_port" . PHP_EOL;
+        return $_test_server_base_url;
+    }
+    
+    if ($document_root === null) {
+        $document_root = dirname(__DIR__); // Default to helpers root
+    }
+    
+    $_test_server_port = find_available_port(8080);
+    if ($_test_server_port === false) {
+        throw new Exception("No available port found for test server");
+    }
+    
+    $_test_server_base_url = "http://127.0.0.1:$_test_server_port";
+    
+    echo "Starting test server on port $_test_server_port..." . PHP_EOL;
+    
+    // Start PHP built-in server in background
+    $command = sprintf(
+        'php -S 127.0.0.1:%d -t %s > /dev/null 2>&1 & echo $!',
+        $_test_server_port,
+        escapeshellarg($document_root)
+    );
+    
+    $output = shell_exec($command);
+    $_test_server_pid = (int)trim($output);
+    
+    if ($_test_server_pid <= 0) {
+        throw new Exception("Failed to start test server");
+    }
+    
+    // Wait a moment for server to start
+    usleep(500000); // 0.5 seconds
+    
+    // Test if server is responding
+    $test_url = $_test_server_base_url . '/index.php';
+    $response = @file_get_contents($test_url);
+    if ($response === false) {
+        stop_test_server();
+        throw new Exception("Test server started but not responding at $test_url");
+    }
+    
+    echo "Test server started successfully at $_test_server_base_url" . PHP_EOL;
+    return $_test_server_base_url;
+}
+
+/**
+ * Stop the test server
+ */
+function stop_test_server() {
+    global $_test_server_pid, $_test_server_port, $_test_server_base_url;
+    
+    if ($_test_server_pid !== null) {
+        echo "Stopping test server (PID: $_test_server_pid)..." . PHP_EOL;
+        
+        // Kill the server process
+        $kill_command = "kill $_test_server_pid 2>/dev/null";
+        shell_exec($kill_command);
+        
+        // Wait a moment for graceful shutdown
+        usleep(200000); // 0.2 seconds
+        
+        // Force kill if still running
+        $force_kill_command = "kill -9 $_test_server_pid 2>/dev/null";
+        shell_exec($force_kill_command);
+        
+        $_test_server_pid = null;
+        $_test_server_port = null;
+        $_test_server_base_url = null;
+        
+        echo "Test server stopped" . PHP_EOL;
+    }
+}
+
+/**
+ * Get the current test server base URL
+ */
+function get_test_server_url() {
+    global $_test_server_base_url;
+    return $_test_server_base_url;
+}
+
+/**
+ * Cleanup function to ensure server is stopped
+ */
+function cleanup_test_server() {
+    stop_test_server();
+}
+
+// Register cleanup handlers
+register_shutdown_function('cleanup_test_server');
+
+// Set up exception handler to ensure cleanup
+set_exception_handler(function($exception) {
+    echo "Uncaught exception: " . $exception->getMessage() . PHP_EOL;
+    cleanup_test_server();
+    exit(1);
+});
+
+// Handle SIGINT (Ctrl+C) and SIGTERM if available
+if (function_exists('pcntl_signal')) {
+    pcntl_signal(SIGINT, function() {
+        echo PHP_EOL . "Received interrupt signal, cleaning up..." . PHP_EOL;
+        cleanup_test_server();
+        exit(0);
+    });
+    
+    pcntl_signal(SIGTERM, function() {
+        echo PHP_EOL . "Received termination signal, cleaning up..." . PHP_EOL;
+        cleanup_test_server();
+        exit(0);
+    });
 }
 
 // Global test instance
