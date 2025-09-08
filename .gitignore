@@ -12,3 +12,4 @@ wp-load.php
 *.tmp
 *.cache
 config/**
+.env
