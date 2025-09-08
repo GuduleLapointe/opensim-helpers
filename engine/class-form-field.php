@@ -918,9 +918,9 @@ class OpenSim_Field {
             <div class="col-md-6">%s</div>
             </div>
             </div>',
-            $this->render_inline_field('console_host', _('Host'), 'text', $defaults['host'] ?? 'localhost', true),
-            $this->render_inline_field('console_port', _('Port'), 'number', $defaults['port'] ?? '8404', true),
-            $this->render_inline_field('console_user', _('Username'), 'text', $defaults['user'] ?? 'admin', true),
+            $this->render_inline_field('console_host', _('Host'), 'text', $defaults['host'] ?? '', true),
+            $this->render_inline_field('console_port', _('Port'), 'number', $defaults['port'] ?? '', true),
+            $this->render_inline_field('console_user', _('Username'), 'text', $defaults['user'] ?? '', true),
             $this->render_inline_field('console_pass', _('Password'), 'password', $defaults['pass'] ?? '', true)
         );
         
