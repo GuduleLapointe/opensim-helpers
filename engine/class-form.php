@@ -247,7 +247,7 @@ class OpenSim_Form {
         }
 
         $buttons['reset'] = sprintf(
-            '<button type="submit" name="reset_form" value="1" class="ms-auto btn btn-outline-danger" onclick="return confirm(\'%s\')">%s</button>',
+            '<button type="submit" name="reset_form" formnovalidate value="1" class="ms-auto btn btn-outline-danger" onclick="return confirm(\'%s\')">%s</button>',
             _('Are you sure you want to reset the form? All data will be lost.'),
             _('Reset')
         );
