@@ -45,7 +45,7 @@ class Installation_Wizard {
         //     $form_config = unserialize($_SESSION['wizard_form_config']);
         //     // Use session form to preserve config between pages
         // }
-        $form_config = is_string($_SESSION['wizard_form_config']) ? unserialize($_SESSION['wizard_form_config']) : null;
+        $form_config = is_string($_SESSION['wizard_form_config'] ?? false) ? unserialize($_SESSION['wizard_form_config']) : null;
 
         if(empty($form_config) || ! is_array($form_config)) {
             $grid_name = OpenSim::grid_name();
@@ -600,6 +600,7 @@ class Installation_Wizard {
                     // Theorically, if we reach this point, minimal validation has been done, we can proceed.
                     break;
                 case 'import_legacy':
+                    // Stop making changes here, it is not what we are working on now.
                     // TODO: run constants import, minimal config validation and load as work config
                     $errors[] = '[DEBUG] config_method ' . $config_method . ' validation not implemented yet';
                     break;
@@ -608,9 +609,21 @@ class Installation_Wizard {
                         $errors[] = _('Please fill the Robust(.HG).ini file path or upload a file');
                         $field_errors['robust_ini'] = _('Please provide at least one .ini file path');
                     } else {
-                        // Get the ini file path (either uploaded or server path)
+                        // Get the ini file path (handle both path and upload properly)
+                        $ini_path = null;
                         
-                        $ini_path = $submitted_data['robust_ini']['path'] ?? $submitted_data['robust_ini']['upload'] ?? null;
+                        if (!empty($submitted_data['robust_ini']['path'])) {
+                            $ini_path = $submitted_data['robust_ini']['path'];
+                        } elseif (!empty($submitted_data['robust_ini']['upload'])) {
+                            // Handle file upload - get the actual uploaded file path
+                            $upload_field = 'robust_ini[upload]';
+                            if (isset($_FILES[$upload_field]) && $_FILES[$upload_field]['error'] === UPLOAD_ERR_OK) {
+                                $ini_path = $_FILES[$upload_field]['tmp_name'];
+                            } else {
+                                $errors[] = _('File upload failed or no file was uploaded');
+                                $field_errors['robust_ini'] = _('Upload failed');
+                            }
+                        }
                         
                         if($ini_path && file_exists($ini_path)) {
                             try {
@@ -633,8 +646,8 @@ class Installation_Wizard {
                                         // Set imported config for Engine_Settings to use
                                         Engine_Settings::set_imported_options($config);
 
-                                        // Clear cached form config so it regenerates with imported data
-                                        // unset($_SESSION['wizard_form_config']);
+                                        // $_SESSION['wizard_form_config'] is required by the multi-step form
+                                        // we need to keep it until the wizard is completed
                                     }
                                 }
                             } catch(Throwable $e) {
@@ -648,7 +661,9 @@ class Installation_Wizard {
                     }
                     break;
                 case 'start_fresh':
-                    // to unload any work config so next page doesn't contain random/unrelated alues
+                    // Stop making changes here, it is not what we are working on now.
+                    // For fresh start, clear any previously imported configurations and form config
+                    Engine_Settings::set_imported_options(null);
                     unset($_SESSION['wizard_form_config']);
                     $errors[] = '[DEBUG] config_method ' . $config_method . ' validation not implemented yet';
                     break;
