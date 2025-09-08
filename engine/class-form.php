@@ -198,10 +198,12 @@ class OpenSim_Form {
         }
         
         // Start form
+        $enctype = $this->has_file_fields() ? ' enctype="multipart/form-data"' : '';
         $html .= sprintf(
-            '<form id="%s" method="post" action="%s" class="helpers-form">',
+            '<form id="%s" method="post" action="%s" class="helpers-form"%s>',
             $this->form_id,
-            $_SERVER['REQUEST_URI']
+            $_SERVER['REQUEST_URI'],
+            $enctype
         );
         
         // Render fields
@@ -851,6 +853,20 @@ class OpenSim_Form {
     }
     
     /**
+     * Check if form has any file fields that need multipart encoding
+     */
+    private function has_file_fields() {
+        if ($this->multistep) {
+            $current_step = $this->get_current_step_config();
+            $fields = $current_step['fields'] ?? array();
+        } else {
+            $fields = $this->fields;
+        }
+        
+        return $this->fields_contain_file_types($fields);
+    }
+    
+    /**
      * Recursively check if fields contain select2 type
      */
     private function fields_contain_select2($fields) {
@@ -869,6 +885,35 @@ class OpenSim_Form {
                 foreach ($field_config['options'] as $option) {
                     if (is_array($option) && isset($option['fields']) && is_array($option['fields'])) {
                         if ($this->fields_contain_select2($option['fields'])) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Recursively check if fields contain file types (file, ini_files)
+     */
+    private function fields_contain_file_types($fields) {
+        foreach ($fields as $field_config) {
+            $type = $field_config['type'] ?? '';
+            if (in_array($type, ['file', 'ini_files'])) {
+                return true;
+            }
+            // Check nested fields in groups
+            if (isset($field_config['fields']) && is_array($field_config['fields'])) {
+                if ($this->fields_contain_file_types($field_config['fields'])) {
+                    return true;
+                }
+            }
+            // Check nested fields in select-nested options
+            if (isset($field_config['options']) && is_array($field_config['options'])) {
+                foreach ($field_config['options'] as $option) {
+                    if (is_array($option) && isset($option['fields']) && is_array($option['fields'])) {
+                        if ($this->fields_contain_file_types($option['fields'])) {
                             return true;
                         }
                     }
