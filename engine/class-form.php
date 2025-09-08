@@ -202,7 +202,7 @@ class OpenSim_Form {
         $html .= sprintf(
             '<form id="%s" method="post" action="%s" class="helpers-form"%s>',
             $this->form_id,
-            $_SERVER['REQUEST_URI'],
+            $_SERVER['REQUEST_URI'] ?? '',
             $enctype
         );
         
@@ -302,8 +302,10 @@ class OpenSim_Form {
         }
         
         // Redirect to avoid resubmission
-        header('Location: ' . $_SERVER['REQUEST_URI']);
-        exit;
+        if (isset($_SERVER['REQUEST_URI'])) {
+            header('Location: ' . $_SERVER['REQUEST_URI']);
+            exit;
+        }
     }
 
     /**
