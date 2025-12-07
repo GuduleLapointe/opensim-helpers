@@ -7,3 +7,5 @@ sources/
 tmp/
 includes/config.php
 /vendor/
+config/**.php*
+config/**.json*
