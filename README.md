@@ -1,13 +1,15 @@
-# OpenSimulator Helpers
+# OpenSimulator Helpers (2.x deprecated)
 
 ![Version 2.5.0](https://badgen.net/badge/Version/2.5.0/blue)
-![Stable 2.5.0](https://badgen.net/badge/Stable/2.5.0/green)
+![Stable 3.0.0](https://badgen.net/badge/Stable/3.0.0/green)
 ![Requires PHP 5.7](https://badgen.net/badge/PHP/5.7/7884bf)
 ![License AGPLv3](https://badgen.net/badge/License/AGPLv3/552b55)
 
 Collection of PHP scripts to complement OpenSimulator features.
 
 ## Description
+
+> **Important Note**: The branch 2.x is deprecated. Please use [master](https://github.com/GuduleLapointe/opensim-helpers/tree/master) or [3.x branch](https://github.com/GuduleLapointe/opensim-helpers/tree/3.x) instead.
 
 Collection of PHP scripts to enable OpenSimulator features that are not implemented in the core, like search, currency, events in OpenSimulator grids (see Features below).
 
