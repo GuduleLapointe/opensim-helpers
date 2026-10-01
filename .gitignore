@@ -7,3 +7,4 @@ sources/
 tmp/
 includes/config.php
 /vendor/
+vendor/
