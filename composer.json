@@ -21,9 +21,9 @@
     "ext-pdo": "*",
     "ext-session": "*",
     "ext-simplexml": "*",
-    "magicoli/opensim-engine": "dev-dev",
-    "magicoli/opensim-rest-php": "dev-dev",
-    "phpxmlrpc/phpxmlrpc": "^4.11"
+    "phpxmlrpc/phpxmlrpc": "^4.11",
+    "magicoli/opensim-rest-php": "dev-opensim-kit",
+    "magicoli/opensim-engine": "dev-opensim-kit"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
@@ -32,30 +32,7 @@
     "phpcompatibility/php-compatibility": "dev-develop",
     "squizlabs/php_codesniffer": "^4.0"
   },
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../opensim-engine",
-      "canonical": false,
-      "options": {
-        "symlink": true,
-        "versions": {
-          "magicoli/opensim-engine": "dev-dev"
-        }
-      }
-    },
-    {
-      "type": "path",
-      "url": "../opensim-rest-php",
-      "canonical": false,
-      "options": {
-        "symlink": true,
-        "versions": {
-          "magicoli/opensim-rest-php": "dev-dev"
-        }
-      }
-    }
-  ],
+  "repositories": [],
   "minimum-stability": "dev",
   "scripts": {
     "test": "pest"
