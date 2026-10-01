@@ -538,9 +538,6 @@ function currency_xmlrpc_call($host, $port, $uri, $request)
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
 
 	$data = curl_exec($ch);
-	if (!curl_errno($ch)) {
-		curl_close($ch);
-	}
 
 	$ret = false;
 	if ($data) {

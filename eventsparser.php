@@ -106,13 +106,13 @@ foreach ($json as $json_event) {
 	$links = opensim_format_tp($json_event["hgurl"], TPLINK_APPTP + TPLINK_HOP);
 	$description = strip_tags(
 		html_entity_decode(
-			utf8_encode(utf8_decode($json_event["description"])),
+			opensim_latin1_only($json_event["description"]),
 		),
 	);
 	$description = "$links\n\n$description";
 	// $title = utf8_encode(utf8_decode($json_event['title']));
 	$title = strip_tags(
-		html_entity_decode(utf8_encode(utf8_decode($json_event["title"]))),
+		html_entity_decode(opensim_latin1_only($json_event["title"])),
 	);
 
 	$fields = [

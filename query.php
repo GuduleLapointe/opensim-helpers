@@ -573,7 +573,7 @@ function event_info_query($method_name, $params, $app_data)
 
 	$data = [];
 	while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-		$date = strftime("%G-%m-%d %H:%M:%S", $row["dateUTC"]);
+		$date = date("o-m-d H:i:s", $row["dateUTC"]);
 
 		$category = "*Unspecified*";
 		if ($row["category"] == 18) {

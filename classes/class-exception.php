@@ -18,7 +18,7 @@ class OpenSim_Exception extends Exception
 	// private array $trace = [];
 	// private ?Throwable $previous = null;
 
-	public function __construct($message, $code = 0, Exception $previous = null)
+	public function __construct($message, $code = 0, ?Exception $previous = null)
 	{
 		parent::__construct($message, $code, $previous);
 		error_log($this->__toString());
@@ -55,7 +55,7 @@ class OpenSim_Exception extends Exception
  */
 class OpenSim_Error extends OpenSim_Exception
 {
-	public function __construct($message, $code = 0, Exception $previous = null)
+	public function __construct($message, $code = 0, ?Exception $previous = null)
 	{
 		parent::__construct($message, $code, $previous);
 		// error_log( $this->__toString() );
