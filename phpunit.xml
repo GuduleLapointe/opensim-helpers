@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+	colors="true"
+	failOnWarning="true"
+	failOnNotice="true"
+	failOnDeprecation="true"
+	displayDetailsOnTestsThatTriggerDeprecations="false"
+>
+	<extensions>
+		<bootstrap class="Magicoli\PestFailureSummary\FailureSummaryExtension" />
+	</extensions>
+	<testsuites>
+		<testsuite name="Environment">
+			<directory>tests/Environment</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>
