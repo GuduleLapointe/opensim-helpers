@@ -10,11 +10,27 @@
     }
   ],
   "require": {
-    "php": ">=8.0",
+    "php": ">=8.2",
+    "ext-curl": "*",
+    "ext-dom": "*",
+    "ext-filter": "*",
+    "ext-gettext": "*",
+    "ext-intl": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-pdo": "*",
+    "ext-session": "*",
+    "ext-simplexml": "*",
     "magicoli/opensim-engine": "dev-dev",
     "magicoli/opensim-rest-php": "dev-dev"
   },
-  "require-dev": {},
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+    "magicoli/pest-failure-summary": "^1.0",
+    "pestphp/pest": "^3.0",
+    "phpcompatibility/php-compatibility": "dev-develop",
+    "squizlabs/php_codesniffer": "^4.0"
+  },
   "repositories": [
     {
       "type": "path",
@@ -40,5 +56,20 @@
     }
   ],
   "minimum-stability": "dev",
-  "scripts": {}
+  "scripts": {
+    "test": "pest"
+  },
+  "suggest": {
+    "ext-imagick": "textgen.php, the text images"
+  },
+  "config": {
+    "platform": {
+      "php": "8.2.0"
+    },
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "pestphp/pest-plugin": true
+    }
+  },
+  "prefer-stable": true
 }
