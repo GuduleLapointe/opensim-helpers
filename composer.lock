@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4190aad43cef810ea92111314164552a",
+    "content-hash": "dc11e5578d2e2e3f9fd03b6108a70226",
     "packages": [
         {
             "name": "laminas/laminas-escaper",
@@ -303,13 +303,14 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-engine",
-                "reference": "0474abd2c39dc8e8ddeedf5dd66578306d4a7311"
+                "reference": "1d56e03b3669cb50d05a44e296cd7a01214e88d1"
             },
             "require": {
+                "ext-gettext": "*",
                 "laminas/laminas-escaper": "^2.12",
                 "laminas/laminas-filter": "^2.24",
                 "magicoli/opensim-rest-php": "dev-dev",
-                "php": ">=7.4",
+                "php": ">=7.3",
                 "phpxmlrpc/phpxmlrpc": "^4.11"
             },
             "suggest": {
@@ -345,7 +346,7 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-rest-php",
-                "reference": "634bc26b4c93e5394cdef7d3b767e8aeafec7f1a"
+                "reference": "f10c6dcaec5de73f7c67b01e291ed00c5b59a272"
             },
             "require-dev": {
                 "clue/phar-composer": "^1.4"
@@ -490,7 +491,9 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
+    "platform": {
+        "php": ">=8.0"
+    },
     "platform-dev": {},
     "plugin-api-version": "2.9.0"
 }
