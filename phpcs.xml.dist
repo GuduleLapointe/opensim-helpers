@@ -3,7 +3,7 @@
     <description>The PHP versions the code supports. The range comes from composer.json, given by tests/Environment/PhpCompatibilityTest.php.</description>
 
     <rule ref="PHPCompatibility">
-        <!-- xmlrpc_*() were removed from PHP 8.0, the xmlrpc polyfill of the engine provides them -->
+        <!-- xmlrpc_*() were removed from PHP 8.0, the web helpers need them: opensim-helpers loads includes/xmlrpc-polyfill.php, built on phpxmlrpc/phpxmlrpc -->
         <exclude name="PHPCompatibility.FunctionUse.RemovedFunctions.xmlrpc_encodeRemoved"/>
         <exclude name="PHPCompatibility.FunctionUse.RemovedFunctions.xmlrpc_decodeRemoved"/>
         <exclude name="PHPCompatibility.FunctionUse.RemovedFunctions.xmlrpc_encode_requestRemoved"/>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d2aff1919b41d09851493f8365b018ca",
+    "content-hash": "0ae7723750a3abbe7a7c8c77cebed089",
     "packages": [
         {
             "name": "laminas/laminas-escaper",
@@ -301,7 +301,7 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-engine",
-                "reference": "9dbce2bba04d9e8556009e9b5f8381a39b9a893f"
+                "reference": "0cdf61c8abf97904f6e4a1c2ca549e6631fbf559"
             },
             "require": {
                 "ext-curl": "*",
