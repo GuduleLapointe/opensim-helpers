@@ -1,12 +1,43 @@
 {
-    "name": "magicoli/opensim-helpers",
-    "description": "Helpers needed to enable common functionalties like search, currency, events in OpenSimulator grids.",
-    "type": "library",
-    "license": "AGPL-3.0-or-later",
-    "authors": [
-        {
-            "name": "Gudule Lapointe",
-            "email": "gudule@speculoos.world"
+  "name": "magicoli/opensim-helpers",
+  "description": "Helpers needed to enable common functionalties like search, currency, events in OpenSimulator grids.",
+  "type": "library",
+  "license": "AGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Gudule Lapointe",
+      "email": "gudule@speculoos.world"
+    }
+  ],
+  "require": {
+    "magicoli/opensim-engine": "dev-dev",
+    "magicoli/opensim-rest-php": "dev-dev"
+  },
+  "require-dev": {},
+  "repositories": [
+    {
+      "type": "path",
+      "url": "../opensim-engine",
+      "canonical": false,
+      "options": {
+        "symlink": true,
+        "versions": {
+          "magicoli/opensim-engine": "dev-dev"
         }
-    ]
+      }
+    },
+    {
+      "type": "path",
+      "url": "../opensim-rest-php",
+      "canonical": false,
+      "options": {
+        "symlink": true,
+        "versions": {
+          "magicoli/opensim-rest-php": "dev-dev"
+        }
+      }
+    }
+  ],
+  "minimum-stability": "dev",
+  "scripts": {}
 }
