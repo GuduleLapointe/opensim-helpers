@@ -22,8 +22,8 @@
     "ext-session": "*",
     "ext-simplexml": "*",
     "phpxmlrpc/phpxmlrpc": "^4.11",
-    "magicoli/opensim-rest-php": "dev-opensim-kit",
-    "magicoli/opensim-engine": "dev-opensim-kit"
+    "magicoli/opensim-rest-php": "^1.1",
+    "magicoli/opensim-engine": "^3.0.0-beta.1"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^1.2",

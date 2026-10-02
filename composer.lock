@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4f669f2885f2d6c0dea38ad2ebf54bd",
+    "content-hash": "3f0b06e2d3abfe890a220b791c289dc6",
     "packages": [
         {
             "name": "laminas/laminas-escaper",
@@ -68,245 +68,17 @@
             "time": "2025-10-14T18:31:13+00:00"
         },
         {
-            "name": "laminas/laminas-filter",
-            "version": "2.42.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-filter.git",
-                "reference": "985d27bd42daf51b415ce1ee889e0978cc1e59ed"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-filter/zipball/985d27bd42daf51b415ce1ee889e0978cc1e59ed",
-                "reference": "985d27bd42daf51b415ce1ee889e0978cc1e59ed",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "laminas/laminas-servicemanager": "^3.21.0",
-                "laminas/laminas-stdlib": "^3.19.0",
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
-            },
-            "conflict": {
-                "laminas/laminas-validator": "<2.10.1",
-                "zendframework/zend-filter": "*"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "^3.1",
-                "laminas/laminas-crypt": "^3.12",
-                "laminas/laminas-i18n": "^2.30.0",
-                "laminas/laminas-uri": "^2.13",
-                "pear/archive_tar": "^1.6.0",
-                "phpunit/phpunit": "^10.5.58",
-                "psalm/plugin-phpunit": "^0.19.0",
-                "psr/http-factory": "^1.1.0",
-                "vimeo/psalm": "^5.26.1"
-            },
-            "suggest": {
-                "laminas/laminas-crypt": "Laminas\\Crypt component, for encryption filters",
-                "laminas/laminas-i18n": "Laminas\\I18n component for filters depending on i18n functionality",
-                "laminas/laminas-uri": "Laminas\\Uri component, for the UriNormalize filter",
-                "psr/http-factory-implementation": "psr/http-factory-implementation, for creating file upload instances when consuming PSR-7 in file upload filters"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "component": "Laminas\\Filter",
-                    "config-provider": "Laminas\\Filter\\ConfigProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Filter\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Programmatically filter and normalize data and files",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "filter",
-                "laminas"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-filter/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-filter/issues",
-                "rss": "https://github.com/laminas/laminas-filter/releases.atom",
-                "source": "https://github.com/laminas/laminas-filter"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2025-10-13T15:44:52+00:00"
-        },
-        {
-            "name": "laminas/laminas-servicemanager",
-            "version": "3.24.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-servicemanager.git",
-                "reference": "b172a0df568bf37ebdfb3658263156eefe3c1e8c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-servicemanager/zipball/b172a0df568bf37ebdfb3658263156eefe3c1e8c",
-                "reference": "b172a0df568bf37ebdfb3658263156eefe3c1e8c",
-                "shasum": ""
-            },
-            "require": {
-                "laminas/laminas-stdlib": "^3.19",
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
-                "psr/container": "^1.0"
-            },
-            "conflict": {
-                "ext-psr": "*",
-                "laminas/laminas-code": "<4.10.0",
-                "zendframework/zend-code": "<3.3.1",
-                "zendframework/zend-servicemanager": "*"
-            },
-            "provide": {
-                "psr/container-implementation": "^1.0"
-            },
-            "replace": {
-                "container-interop/container-interop": "^1.2.0"
-            },
-            "require-dev": {
-                "composer/package-versions-deprecated": "^1.11.99.5",
-                "friendsofphp/proxy-manager-lts": "^1.0.18",
-                "laminas/laminas-code": "^4.16.0",
-                "laminas/laminas-coding-standard": "~2.5.0",
-                "laminas/laminas-container-config-test": "^0.8",
-                "mikey179/vfsstream": "^1.6.12",
-                "phpbench/phpbench": "^1.4.1",
-                "phpunit/phpunit": "^10.5.58",
-                "psalm/plugin-phpunit": "^0.18.4",
-                "vimeo/psalm": "^5.26.1"
-            },
-            "suggest": {
-                "friendsofphp/proxy-manager-lts": "ProxyManager ^2.1.1 to handle lazy initialization of services"
-            },
-            "bin": [
-                "bin/generate-deps-for-config-factory",
-                "bin/generate-factory-for-class"
-            ],
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/autoload.php"
-                ],
-                "psr-4": {
-                    "Laminas\\ServiceManager\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Factory-Driven Dependency Injection Container",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "PSR-11",
-                "dependency-injection",
-                "di",
-                "dic",
-                "laminas",
-                "service-manager",
-                "servicemanager"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-servicemanager/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-servicemanager/issues",
-                "rss": "https://github.com/laminas/laminas-servicemanager/releases.atom",
-                "source": "https://github.com/laminas/laminas-servicemanager"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2025-10-14T09:03:51+00:00"
-        },
-        {
-            "name": "laminas/laminas-stdlib",
-            "version": "3.21.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-stdlib.git",
-                "reference": "b1c81514cfe158aadf724c42b34d3d0a8164c096"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/b1c81514cfe158aadf724c42b34d3d0a8164c096",
-                "reference": "b1c81514cfe158aadf724c42b34d3d0a8164c096",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
-            },
-            "conflict": {
-                "zendframework/zend-stdlib": "*"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "^3.1.0",
-                "phpbench/phpbench": "^1.4.1",
-                "phpunit/phpunit": "^11.5.42",
-                "psalm/plugin-phpunit": "^0.19.5",
-                "vimeo/psalm": "^6.13.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Stdlib\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "SPL extensions, array utilities, error handlers, and more",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "laminas",
-                "stdlib"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-stdlib/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-stdlib/issues",
-                "rss": "https://github.com/laminas/laminas-stdlib/releases.atom",
-                "source": "https://github.com/laminas/laminas-stdlib"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2025-10-11T18:13:12+00:00"
-        },
-        {
             "name": "magicoli/opensim-engine",
-            "version": "dev-opensim-kit",
+            "version": "3.0.0-beta.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GuduleLapointe/opensim-engine.git",
-                "reference": "cf7780989187de244916355a4947e83189a65bed"
+                "reference": "88f5c01207943f18a6ab322eeb1cc2b4ffa068f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GuduleLapointe/opensim-engine/zipball/cf7780989187de244916355a4947e83189a65bed",
-                "reference": "cf7780989187de244916355a4947e83189a65bed",
+                "url": "https://api.github.com/repos/GuduleLapointe/opensim-engine/zipball/88f5c01207943f18a6ab322eeb1cc2b4ffa068f4",
+                "reference": "88f5c01207943f18a6ab322eeb1cc2b4ffa068f4",
                 "shasum": ""
             },
             "require": {
@@ -320,9 +92,8 @@
                 "ext-pdo": "*",
                 "ext-session": "*",
                 "ext-simplexml": "*",
-                "laminas/laminas-escaper": "^2.12",
-                "laminas/laminas-filter": "^2.24",
-                "magicoli/opensim-rest-php": "dev-opensim-kit",
+                "laminas/laminas-escaper": "^2.12@stable",
+                "magicoli/opensim-rest-php": "^1.1.0",
                 "php": ">=8.2",
                 "phpxmlrpc/phpxmlrpc": "^4.11"
             },
@@ -358,22 +129,22 @@
             "description": "OpenSimulator Engine - Framework-agnostic core functionality for OpenSim grids",
             "support": {
                 "issues": "https://github.com/GuduleLapointe/opensim-engine/issues",
-                "source": "https://github.com/GuduleLapointe/opensim-engine/tree/opensim-kit"
+                "source": "https://github.com/GuduleLapointe/opensim-engine/tree/3.0.0-beta.1"
             },
-            "time": "2026-10-01T18:25:12+00:00"
+            "time": "2026-10-02T08:51:36+00:00"
         },
         {
             "name": "magicoli/opensim-rest-php",
-            "version": "dev-opensim-kit",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/GuduleLapointe/opensim-rest-php.git",
-                "reference": "267868ffa8f8720f2f3e5e930488dae2b0ef565c"
+                "reference": "4896afdf2ef8ff57c5b8ead6167779f1d2394fcb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GuduleLapointe/opensim-rest-php/zipball/267868ffa8f8720f2f3e5e930488dae2b0ef565c",
-                "reference": "267868ffa8f8720f2f3e5e930488dae2b0ef565c",
+                "url": "https://api.github.com/repos/GuduleLapointe/opensim-rest-php/zipball/4896afdf2ef8ff57c5b8ead6167779f1d2394fcb",
+                "reference": "4896afdf2ef8ff57c5b8ead6167779f1d2394fcb",
                 "shasum": ""
             },
             "require": {
@@ -408,9 +179,9 @@
             "description": "OpenSimulator REST PHP library and command-line client",
             "support": {
                 "issues": "https://github.com/GuduleLapointe/opensim-rest-php/issues",
-                "source": "https://github.com/GuduleLapointe/opensim-rest-php/tree/opensim-kit"
+                "source": "https://github.com/GuduleLapointe/opensim-rest-php/tree/1.1.0"
             },
-            "time": "2026-10-01T14:58:16+00:00"
+            "time": "2026-10-02T08:02:58+00:00"
         },
         {
             "name": "phpxmlrpc/phpxmlrpc",
@@ -472,54 +243,6 @@
                 "source": "https://github.com/gggeek/phpxmlrpc/tree/4.11.5"
             },
             "time": "2025-11-11T13:17:35+00:00"
-        },
-        {
-            "name": "psr/container",
-            "version": "1.1.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/container.git",
-                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/container/zipball/513e0666f7216c7459170d56df27dfcefe1689ea",
-                "reference": "513e0666f7216c7459170d56df27dfcefe1689ea",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Container\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "https://www.php-fig.org/"
-                }
-            ],
-            "description": "Common Container Interface (PHP FIG PSR-11)",
-            "homepage": "https://github.com/php-fig/container",
-            "keywords": [
-                "PSR-11",
-                "container",
-                "container-interface",
-                "container-interop",
-                "psr"
-            ],
-            "support": {
-                "issues": "https://github.com/php-fig/container/issues",
-                "source": "https://github.com/php-fig/container/tree/1.1.2"
-            },
-            "time": "2021-11-05T16:50:12+00:00"
         }
     ],
     "packages-dev": [
@@ -2601,6 +2324,59 @@
                 }
             ],
             "time": "2026-07-06T14:52:39+00:00"
+        },
+        {
+            "name": "psr/container",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "support": {
+                "issues": "https://github.com/php-fig/container/issues",
+                "source": "https://github.com/php-fig/container/tree/2.0.2"
+            },
+            "time": "2021-11-05T16:47:00+00:00"
         },
         {
             "name": "psr/log",
@@ -4819,8 +4595,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "magicoli/opensim-engine": 20,
-        "magicoli/opensim-rest-php": 20,
         "phpcompatibility/php-compatibility": 20
     },
     "prefer-stable": true,

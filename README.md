@@ -1,6 +1,14 @@
 # OpenSimulator Helpers
 
-This branch is out of sync, it is a snapshot with some custom adaptations intended for integration in another project.
+![Stable](https://img.shields.io/github/release/GuduleLapointe/opensim-helpers?label=stable&color=green&include_prerelease)
+![GitHub Tag](https://img.shields.io/github/tag/GuduleLapointe/opensim-helpers?label=latest&include_prereleases)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/GuduleLapointe/opensim-helpers/latest?label=dev)
+![PHP](https://img.shields.io/badge/PHP-8.2+-7884bf)
+[![License](https://img.shields.io/badge/license-AGPL--3.0-552b55)](LICENSE)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/GuduleLapointe/opensim-helpers/total)
+[![Donate](https://img.shields.io/badge/-Donate-yellow)](https://magiiic.org/donate/)
+
+This branch is in development, it is intended for integration in another project.
 
 Use master or 3.x branch instead for up-to-date code.
 
