@@ -1,5 +1,9 @@
 ## Changelog
 
+### Unreleased
+
+- new `includes/opensim-kit-config.php` is the `config.php` of an installation made with the OpenSim kit: the constants of the helpers are read by the engine from `opensim.conf`, the Robust config of the grid and its `helpers.ini` (the grid is the one named by `OPENSIM_GRID`, else the only one), with the databases of Robust unless `helpers.ini` gives others; the public path of each service (`/helpers/query.php`, `/search`...) is a setting of the kit
+
 ### 3.0.0-beta.1
 
 First beta of the 3.0 helpers, on the engine and the REST library of the OpenSim kit.

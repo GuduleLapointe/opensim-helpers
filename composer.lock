@@ -73,12 +73,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/GuduleLapointe/opensim-engine.git",
-                "reference": "1fbb45f3cce1e5a9f09e2c54cb57cbd604b6a63b"
+                "reference": "33ee9d1c78d7f0ff3cd5f6e910291e64dba6968c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GuduleLapointe/opensim-engine/zipball/1fbb45f3cce1e5a9f09e2c54cb57cbd604b6a63b",
-                "reference": "1fbb45f3cce1e5a9f09e2c54cb57cbd604b6a63b",
+                "url": "https://api.github.com/repos/GuduleLapointe/opensim-engine/zipball/33ee9d1c78d7f0ff3cd5f6e910291e64dba6968c",
+                "reference": "33ee9d1c78d7f0ff3cd5f6e910291e64dba6968c",
                 "shasum": ""
             },
             "require": {
@@ -114,7 +114,10 @@
                 ],
                 "psr-4": {
                     "OpenSim\\Engine\\": "src/"
-                }
+                },
+                "classmap": [
+                    "class-kit.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -131,7 +134,7 @@
                 "issues": "https://github.com/GuduleLapointe/opensim-engine/issues",
                 "source": "https://github.com/GuduleLapointe/opensim-engine/tree/opensim-kit"
             },
-            "time": "2026-10-02T18:18:32+00:00"
+            "time": "2026-10-02T20:19:49+00:00"
         },
         {
             "name": "magicoli/opensim-rest-php",
