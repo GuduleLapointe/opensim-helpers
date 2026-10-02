@@ -9,3 +9,4 @@ includes/config.php
 /vendor/
 wp-load.php
 .DS_Store
+.zed/
