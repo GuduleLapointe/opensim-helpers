@@ -24,6 +24,14 @@ describe( 'PHP', function () use ( $root, $composer, $minimum, $newest ) {
 	} )->depends( 'minimum declared in composer.json' );
 
 	test( 'code needs nothing newer, nothing deprecated up to the newest', function () use ( $root, $minimum, $newest ) {
+		// The files git knows and does not ignore (what .gitignore leaves out is not the project's code);
+		// the whole folder when it is not a checkout
+		$listed = array();
+		if ( is_dir( "$root/.git" ) ) {
+			exec( 'git -C ' . escapeshellarg( $root ) . ' ls-files --cached --others --exclude-standard -- "*.php"', $listed );
+			$listed = array_values( array_filter( array_map( fn( $file ) => "$root/$file", $listed ), 'is_file' ) );
+		}
+
 		$command = array(
 			PHP_BINARY,
 			"$root/vendor/bin/phpcs",
@@ -33,7 +41,7 @@ describe( 'PHP', function () use ( $root, $composer, $minimum, $newest ) {
 			"$minimum-$newest",
 			'--report=json',
 			'-q',
-			$root,
+			...( $listed ?: array( $root ) ),
 		);
 
 		$process = proc_open( $command, array( 1 => array( 'pipe', 'w' ), 2 => array( 'pipe', 'w' ) ), $pipes );
