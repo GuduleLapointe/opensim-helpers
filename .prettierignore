@@ -2,3 +2,7 @@ vendor/
 tmp/
 build/
 dist/
+contrib/
+upstream/
+core/
+dev/

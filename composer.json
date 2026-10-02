@@ -1,53 +1,53 @@
 {
-  "name": "magicoli/opensim-helpers",
-  "description": "Helpers needed to enable common functionalties like search, currency, events in OpenSimulator grids.",
-  "type": "library",
-  "license": "AGPL-3.0-or-later",
-  "authors": [
-    {
-      "name": "Gudule Lapointe",
-      "email": "gudule@speculoos.world"
-    }
-  ],
-  "require": {
-    "php": ">=8.2",
-    "ext-curl": "*",
-    "ext-dom": "*",
-    "ext-filter": "*",
-    "ext-gettext": "*",
-    "ext-intl": "*",
-    "ext-json": "*",
-    "ext-mbstring": "*",
-    "ext-pdo": "*",
-    "ext-session": "*",
-    "ext-simplexml": "*",
-    "phpxmlrpc/phpxmlrpc": "^4.11",
-    "magicoli/opensim-rest-php": "^1.1",
-    "magicoli/opensim-engine": "^3.0.0-beta.1"
-  },
-  "require-dev": {
-    "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
-    "magicoli/pest-failure-summary": "^1.0",
-    "pestphp/pest": "^3.0",
-    "phpcompatibility/php-compatibility": "dev-develop",
-    "squizlabs/php_codesniffer": "^4.0"
-  },
-  "repositories": [],
-  "minimum-stability": "dev",
-  "scripts": {
-    "test": "pest"
-  },
-  "suggest": {
-    "ext-imagick": "textgen.php, the text images"
-  },
-  "config": {
-    "platform": {
-      "php": "8.2.0"
+    "name": "magicoli/opensim-helpers",
+    "description": "Helpers needed to enable common functionalties like search, currency, events in OpenSimulator grids.",
+    "type": "library",
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Gudule Lapointe",
+            "email": "gudule@speculoos.world"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "ext-curl": "*",
+        "ext-dom": "*",
+        "ext-filter": "*",
+        "ext-gettext": "*",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "ext-session": "*",
+        "ext-simplexml": "*",
+        "phpxmlrpc/phpxmlrpc": "^4.11",
+        "magicoli/opensim-rest-php": "^1.1",
+        "magicoli/opensim-engine": "^3.0.0-beta.1"
     },
-    "allow-plugins": {
-      "dealerdirect/phpcodesniffer-composer-installer": true,
-      "pestphp/pest-plugin": true
-    }
-  },
-  "prefer-stable": true
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
+        "magicoli/pest-failure-summary": "^1.0",
+        "pestphp/pest": "^3.0",
+        "phpcompatibility/php-compatibility": "dev-develop",
+        "squizlabs/php_codesniffer": "^4.0"
+    },
+    "repositories": [],
+    "minimum-stability": "dev",
+    "scripts": {
+        "test": "pest"
+    },
+    "suggest": {
+        "ext-imagick": "textgen.php, the text images"
+    },
+    "config": {
+        "platform": {
+            "php": "8.2.0"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "pestphp/pest-plugin": true
+        }
+    },
+    "prefer-stable": true
 }
