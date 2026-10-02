@@ -13,19 +13,19 @@
  * @license     AGPLv3
  */
 
-if (!defined("APP_NAME")) {
+if (!defined('APP_NAME')) {
     // Not called from Laravel
     http_response_code(503);
-    die("Not properly configured");
+    die('Not properly configured');
 }
 
 use App\Settings\HelpersSettings;
 
-require_once "functions.php";
+require_once 'functions.php';
 
-define("OPENSIM_USE_UTC_TIME", settings("helpers.use_utc_time", true));
+define('OPENSIM_USE_UTC_TIME', settings('helpers.use_utc_time', true));
 
-$credentials = settings("helpers.credentials");
+$credentials = settings('helpers.credentials');
 
 // --- Search Settings (grid-independant services) ---
 
@@ -40,40 +40,33 @@ $credentials = settings("helpers.credentials");
  * These are recommendations, the Robust database can safely be used instead.
  */
 
-$search_db = $credentials["search_db"] ?? [];
+$search_db = $credentials['search_db'] ?? [];
 
-define("SEARCH_DB_HOST", $search_db["hostname"] ?? null);
-define("SEARCH_DB_NAME", $search_db["prefix"] ?? null);
-define("SEARCH_DB_USER", $search_db["user"] ?? null);
-define("SEARCH_DB_PASS", $search_db["password"] ?? null);
-define("SEARCH_TABLE_EVENTS", "events"); // TODO: expose as setting if needed
+define('SEARCH_DB_HOST', $search_db['hostname'] ?? null);
+define('SEARCH_DB_NAME', $search_db['prefix'] ?? null);
+define('SEARCH_DB_USER', $search_db['user'] ?? null);
+define('SEARCH_DB_PASS', $search_db['password'] ?? null);
+define('SEARCH_TABLE_EVENTS', 'events'); // TODO: expose as setting if needed
 
 /**
  * Other registrars to forward hosts registrations.
  * Deprecated since OpenSim 0.9.x, use DATA_SRV_* instead in OpenSim.ini
  */
-define("SEARCH_REGISTRARS", []); // Deprecated
+define('SEARCH_REGISTRARS', []); // Deprecated
 
-define(
-    "HYPEVENTS_URL",
-    preg_replace(
-        ':/$:',
-        "",
-        settings("helpers.events_url", "https://2do.directory/events"),
-    ),
-);
+define('HYPEVENTS_URL', preg_replace(':/$:', '', settings('helpers.events_url', 'https://2do.directory/events')));
 
 // --- Grid settings (Robust/Standalone OpenSim server) ---
 
-define("OPENSIM_GRID_NAME", settings("helpers.grid_name"));
-define("OPENSIM_LOGIN_URI", settings("helpers.login_uri"));
-define("OPENSIM_MAIL_SENDER", settings("helpers.mail_sender"));
+define('OPENSIM_GRID_NAME', settings('helpers.grid_name'));
+define('OPENSIM_LOGIN_URI', settings('helpers.login_uri'));
+define('OPENSIM_MAIL_SENDER', settings('helpers.mail_sender'));
 // define('OPENSIM_GRID_LOGO_URL', settings("helpers.grid_logo_url"));
 
-$robust_db = $credentials["robust_db"] ?? [];
-$opensim_db = $credentials["opensim_db"] ?? $robust_db;
-$offline_db = $credentials["offline_db"] ?? $robust_db;
-$currency_db = $credentials["currency_db"] ?? $robust_db;
+$robust_db = $credentials['robust_db'] ?? [];
+$opensim_db = $credentials['opensim_db'] ?? $robust_db;
+$offline_db = $credentials['offline_db'] ?? $robust_db;
+$currency_db = $credentials['currency_db'] ?? $robust_db;
 
 /**
  * Main database.
@@ -91,46 +84,43 @@ $currency_db = $credentials["currency_db"] ?? $robust_db;
  */
 
 // --- Main/Robust DB ---
-define("ROBUST_DB", true); // TODO: expose as setting if needed
-define("ROBUST_DB_HOST", $robust_db["hostname"] ?? null);
-define("ROBUST_DB_NAME", $robust_db["prefix"] ?? null);
-define("ROBUST_DB_USER", $robust_db["user"] ?? null);
-define("ROBUST_DB_PASS", $robust_db["password"] ?? null);
+define('ROBUST_DB', true); // TODO: expose as setting if needed
+define('ROBUST_DB_HOST', $robust_db['hostname'] ?? null);
+define('ROBUST_DB_NAME', $robust_db['prefix'] ?? null);
+define('ROBUST_DB_USER', $robust_db['user'] ?? null);
+define('ROBUST_DB_PASS', $robust_db['password'] ?? null);
 
 // --- Standalone/Region DB ---
-define("OPENSIM_DB", true); // TODO: expose as setting if needed
-define("OPENSIM_DB_HOST", $opensim_db["hostname"] ?? null);
-define("OPENSIM_DB_NAME", $opensim_db["prefix"] ?? null);
-define("OPENSIM_DB_USER", $opensim_db["user"] ?? null);
-define("OPENSIM_DB_PASS", $opensim_db["password"] ?? null);
+define('OPENSIM_DB', true); // TODO: expose as setting if needed
+define('OPENSIM_DB_HOST', $opensim_db['hostname'] ?? null);
+define('OPENSIM_DB_NAME', $opensim_db['prefix'] ?? null);
+define('OPENSIM_DB_USER', $opensim_db['user'] ?? null);
+define('OPENSIM_DB_PASS', $opensim_db['password'] ?? null);
 
 // --- Currency DB ---
-define("CURRENCY_DB_HOST", $currency_db["hostname"] ?? null);
-define("CURRENCY_DB_NAME", $currency_db["prefix"] ?? null);
-define("CURRENCY_DB_USER", $currency_db["user"] ?? null);
-define("CURRENCY_DB_PASS", $currency_db["password"] ?? null);
-define("CURRENCY_MONEY_TBL", "balances"); // TODO: expose as setting if needed
-define("CURRENCY_TRANSACTION_TBL", "transactions"); // TODO: expose as setting if needed
+define('CURRENCY_DB_HOST', $currency_db['hostname'] ?? null);
+define('CURRENCY_DB_NAME', $currency_db['prefix'] ?? null);
+define('CURRENCY_DB_USER', $currency_db['user'] ?? null);
+define('CURRENCY_DB_PASS', $currency_db['password'] ?? null);
+define('CURRENCY_MONEY_TBL', 'balances'); // TODO: expose as setting if needed
+define('CURRENCY_TRANSACTION_TBL', 'transactions'); // TODO: expose as setting if needed
 
 // --- Money Server ---
-define(
-    "CURRENCY_USE_MONEYSERVER",
-    settings("helpers.currency_use_moneyserver", false),
-);
-define("CURRENCY_SCRIPT_KEY", settings("helpers.currency_script_key", null));
-define("CURRENCY_RATE", settings("helpers.currency_rate", null));
-define("CURRENCY_RATE_PER", settings("helpers.currency_rate_per", null));
-define("CURRENCY_PROVIDER", settings("helpers.currency_provider", null));
-define("CURRENCY_HELPER_URL", settings("helpers.currency_helper_url", null));
+define('CURRENCY_USE_MONEYSERVER', settings('helpers.currency_use_moneyserver', false));
+define('CURRENCY_SCRIPT_KEY', settings('helpers.currency_script_key', null));
+define('CURRENCY_RATE', settings('helpers.currency_rate', null));
+define('CURRENCY_RATE_PER', settings('helpers.currency_rate_per', null));
+define('CURRENCY_PROVIDER', settings('helpers.currency_provider', null));
+define('CURRENCY_HELPER_URL', settings('helpers.currency_helper_url', null));
 
 /**
  * OffLine messages forwarding
  */
-define("OFFLINE_DB_HOST", $offline_db["hostname"] ?? null);
-define("OFFLINE_DB_NAME", $offline_db["prefix"] ?? null);
-define("OFFLINE_DB_USER", $offline_db["user"] ?? null);
-define("OFFLINE_DB_PASS", $offline_db["password"] ?? null);
-define("OFFLINE_MESSAGE_TBL", "im_offline"); // TODO: expose as setting if needed
+define('OFFLINE_DB_HOST', $offline_db['hostname'] ?? null);
+define('OFFLINE_DB_NAME', $offline_db['prefix'] ?? null);
+define('OFFLINE_DB_USER', $offline_db['user'] ?? null);
+define('OFFLINE_DB_PASS', $offline_db['password'] ?? null);
+define('OFFLINE_MESSAGE_TBL', 'im_offline'); // TODO: expose as setting if needed
 
 /**
  * Mute list database.
@@ -149,12 +139,12 @@ define("OFFLINE_MESSAGE_TBL", "im_offline"); // TODO: expose as setting if neede
  * DO NOT MAKE CHANGES BELOW THIS
  */
 if (OPENSIM_USE_UTC_TIME) {
-    date_default_timezone_set("UTC");
+    date_default_timezone_set('UTC');
 }
 
-require_once "databases.php";
+require_once 'databases.php';
 
-$currency_addon = dirname(__DIR__) . "/addons/" . CURRENCY_PROVIDER . ".php";
+$currency_addon = dirname(__DIR__) . '/addons/' . CURRENCY_PROVIDER . '.php';
 if (file_exists($currency_addon)) {
     require_once $currency_addon;
 }

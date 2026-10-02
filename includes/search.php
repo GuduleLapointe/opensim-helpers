@@ -16,8 +16,8 @@
  *   [OpenSimSearch](https://github.com/kcozens/OpenSimSearch)
  */
 
-if (!defined("SEARCH_TABLE_EVENTS")) {
-    define("SEARCH_TABLE_EVENTS", "events");
+if (!defined('SEARCH_TABLE_EVENTS')) {
+    define('SEARCH_TABLE_EVENTS', 'events');
 }
 
 function ossearch_db_tables($db)
@@ -185,27 +185,19 @@ function ossearch_db_update_1()
     }
 
     $tables = [
-        "allparcels",
-        "classifieds",
+        'allparcels',
+        'classifieds',
         SEARCH_TABLE_EVENTS,
-        "hostsregister",
-        "objects",
-        "parcels",
-        "parcelsales",
-        "popularplaces",
-        "regions",
+        'hostsregister',
+        'objects',
+        'parcels',
+        'parcelsales',
+        'popularplaces',
+        'regions',
     ];
     foreach ($tables as $table) {
-        if (
-            !count(
-                $SearchDB
-                    ->query("SHOW COLUMNS FROM `$table` LIKE 'gatekeeperURL'")
-                    ->fetchAll(),
-            )
-        ) {
-            $SearchDB->query(
-                "ALTER TABLE $table ADD gatekeeperURL varchar(255)",
-            );
+        if (!count($SearchDB->query("SHOW COLUMNS FROM `$table` LIKE 'gatekeeperURL'")->fetchAll())) {
+            $SearchDB->query("ALTER TABLE $table ADD gatekeeperURL varchar(255)");
         }
     }
 }
@@ -217,26 +209,20 @@ function ossearch_db_update_2()
         return false;
     }
 
-    if (
-        !count(
-            $SearchDB
-                ->query("SHOW COLUMNS FROM `parcels` LIKE 'imageUUID'")
-                ->fetchAll(),
-        )
-    ) {
-        $SearchDB->query("ALTER TABLE parcels ADD imageUUID char(36)");
+    if (!count($SearchDB->query("SHOW COLUMNS FROM `parcels` LIKE 'imageUUID'")->fetchAll())) {
+        $SearchDB->query('ALTER TABLE parcels ADD imageUUID char(36)');
     }
 }
 
 function ossearch_terms_join($glue, $terms, $deprecated = true)
 {
     if (empty($terms)) {
-        return "";
+        return '';
     }
-    return "(" . join($glue, $terms) . ")";
+    return '(' . join($glue, $terms) . ')';
 }
 
-function ossearch_terms_build_rating($flags, $table = "")
+function ossearch_terms_build_rating($flags, $table = '')
 {
     if (!empty($table)) {
         $table = "$table.";
@@ -251,7 +237,7 @@ function ossearch_terms_build_rating($flags, $table = "")
     if ($flags & pow(2, 26)) {
         $terms[] = "{$table}mature = 'Adult'";
     }
-    return ossearch_terms_join(" OR ", $terms);
+    return ossearch_terms_join(' OR ', $terms);
 }
 
 function ossearch_hostUnregister($hostname, $port)
@@ -262,43 +248,27 @@ function ossearch_hostUnregister($hostname, $port)
         'DELETE FROM hostsregister
     WHERE host = :host AND port = :port',
         [
-            "host" => $hostname,
-            "port" => $port,
+            'host' => $hostname,
+            'port' => $port,
         ],
     );
 
-    $query = $SearchDB->prepareAndExecute(
-        "SELECT regionUUID FROM " . SEARCH_REGION_TABLE . " WHERE url = ?",
-        ["http://$hostname:$port/"],
-    );
+    $query = $SearchDB->prepareAndExecute('SELECT regionUUID FROM ' . SEARCH_REGION_TABLE . ' WHERE url = ?', [
+        "http://$hostname:$port/",
+    ]);
     if ($query) {
         $regions = $query->fetchAll();
         foreach ($regions as $region) {
             $regionUUID = $region[0];
             $SearchDB->prepareAndExecute(
-                "DELETE pop FROM popularplaces AS pop INNER JOIN parcels AS par ON pop.parcelUUID = par.parcelUUID WHERE regionUUID = ?",
+                'DELETE pop FROM popularplaces AS pop INNER JOIN parcels AS par ON pop.parcelUUID = par.parcelUUID WHERE regionUUID = ?',
                 [$regionUUID],
             );
-            $SearchDB->prepareAndExecute(
-                "DELETE FROM parcels WHERE regionUUID = ?",
-                [$regionUUID],
-            );
-            $SearchDB->prepareAndExecute(
-                "DELETE FROM allparcels WHERE regionUUID = ?",
-                [$regionUUID],
-            );
-            $SearchDB->prepareAndExecute(
-                "DELETE FROM parcelsales WHERE regionUUID = ?",
-                [$regionUUID],
-            );
-            $SearchDB->prepareAndExecute(
-                "DELETE FROM objects WHERE regionuuid = ?",
-                [$regionUUID],
-            );
-            $SearchDB->prepareAndExecute(
-                "DELETE FROM " . SEARCH_REGION_TABLE . " WHERE regionUUID = ?",
-                [$regionUUID],
-            );
+            $SearchDB->prepareAndExecute('DELETE FROM parcels WHERE regionUUID = ?', [$regionUUID]);
+            $SearchDB->prepareAndExecute('DELETE FROM allparcels WHERE regionUUID = ?', [$regionUUID]);
+            $SearchDB->prepareAndExecute('DELETE FROM parcelsales WHERE regionUUID = ?', [$regionUUID]);
+            $SearchDB->prepareAndExecute('DELETE FROM objects WHERE regionuuid = ?', [$regionUUID]);
+            $SearchDB->prepareAndExecute('DELETE FROM ' . SEARCH_REGION_TABLE . ' WHERE regionUUID = ?', [$regionUUID]);
         }
     }
 }
@@ -312,17 +282,17 @@ function osdb_cache_get($key, $default = null)
 
     $now = time();
     $query = $SearchDB->prepareAndExecute(
-        "SELECT cache_value FROM oshelpers_cache WHERE cache_key = :key AND (cache_expires IS NULL OR cache_expires = 0 OR cache_expires > :now)",
+        'SELECT cache_value FROM oshelpers_cache WHERE cache_key = :key AND (cache_expires IS NULL OR cache_expires = 0 OR cache_expires > :now)',
         [
-            "key" => $key,
-            "now" => $now,
+            'key' => $key,
+            'now' => $now,
         ],
     );
 
     if ($query) {
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
         if (is_array($result) && isset($result[0])) {
-            $raw = $result[0]["cache_value"];
+            $raw = $result[0]['cache_value'];
 
             if ($raw) {
                 $value = json_decode($raw, true);
@@ -359,20 +329,16 @@ function osdb_cache_set($key, $value, $expire_delay = 0)
       ON DUPLICATE KEY UPDATE `cache_value` = :value, `cache_expires` = :expires';
 
     $query = $SearchDB->prepareAndExecute($sql, [
-        "key" => $key,
-        "value" => json_encode($value),
-        "expires" => $expires,
+        'key' => $key,
+        'value' => json_encode($value),
+        'expires' => $expires,
     ]);
 
     return $query;
 }
 
 try {
-    $SearchDB = new OSPDO(
-        "mysql:host=" . SEARCH_DB_HOST . ";dbname=" . SEARCH_DB_NAME,
-        SEARCH_DB_USER,
-        SEARCH_DB_PASS,
-    );
+    $SearchDB = new OSPDO('mysql:host=' . SEARCH_DB_HOST . ';dbname=' . SEARCH_DB_NAME, SEARCH_DB_USER, SEARCH_DB_PASS);
 } catch (PDOException $e) {
     // error_log("could not connect to " . SEARCH_DB_HOST);
     error_log($e);
@@ -386,51 +352,36 @@ if ($SearchDB && $SearchDB->connected) {
     // table, although it has a different structure and a different purpose. It
     // could be renamed but some developers are reluctant to do it, so we keep the
     // original name for backward compatibility when in a separate database.
-    if (tableExists($SearchDB, ["regions"])) {
-        $formatCheck = $SearchDB->query(
-            "SHOW COLUMNS FROM regions LIKE 'uuid'",
-        );
-        $regions_table =
-            $formatCheck->rowCount() == 0 ? "regions" : "regionsregister";
+    if (tableExists($SearchDB, ['regions'])) {
+        $formatCheck = $SearchDB->query("SHOW COLUMNS FROM regions LIKE 'uuid'");
+        $regions_table = $formatCheck->rowCount() == 0 ? 'regions' : 'regionsregister';
     } else {
-        $regions_table = "regions";
+        $regions_table = 'regions';
     }
-    define("SEARCH_REGION_TABLE", $regions_table);
+    define('SEARCH_REGION_TABLE', $regions_table);
 
     if (
         !tableExists($SearchDB, [
-            "oshelpers_cache",
+            'oshelpers_cache',
             SEARCH_REGION_TABLE,
-            "parcels",
-            "parcelsales",
-            "allparcels",
-            "objects",
-            "popularplaces",
+            'parcels',
+            'parcelsales',
+            'allparcels',
+            'objects',
+            'popularplaces',
             SEARCH_TABLE_EVENTS,
-            "classifieds",
-            "hostsregister",
+            'classifieds',
+            'hostsregister',
         ])
     ) {
-        error_log("Creating missing OpenSimSearch tables in " . SEARCH_DB_NAME);
+        error_log('Creating missing OpenSimSearch tables in ' . SEARCH_DB_NAME);
         ossearch_db_tables($SearchDB);
     }
 
-    if (
-        !count(
-            $SearchDB
-                ->query("SHOW COLUMNS FROM `parcels` LIKE 'gatekeeperURL'")
-                ->fetchAll(),
-        )
-    ) {
+    if (!count($SearchDB->query("SHOW COLUMNS FROM `parcels` LIKE 'gatekeeperURL'")->fetchAll())) {
         ossearch_db_update_1();
     }
-    if (
-        !count(
-            $SearchDB
-                ->query("SHOW COLUMNS FROM `parcels` LIKE 'imageUUID'")
-                ->fetchAll(),
-        )
-    ) {
+    if (!count($SearchDB->query("SHOW COLUMNS FROM `parcels` LIKE 'imageUUID'")->fetchAll())) {
         ossearch_db_update_2();
     }
 }

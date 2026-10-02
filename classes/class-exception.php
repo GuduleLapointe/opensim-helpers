@@ -9,36 +9,36 @@
 
 class OpenSim_Exception extends Exception
 {
-	// Properties defined by parent class, for reference:
-	// protected string $message = "";
-	// private string $string = "";
-	// protected int $code;
-	// protected string $file = "";
-	// protected int $line;
-	// private array $trace = [];
-	// private ?Throwable $previous = null;
+    // Properties defined by parent class, for reference:
+    // protected string $message = "";
+    // private string $string = "";
+    // protected int $code;
+    // protected string $file = "";
+    // protected int $line;
+    // private array $trace = [];
+    // private ?Throwable $previous = null;
 
-	public function __construct($message, $code = 0, ?Exception $previous = null)
-	{
-		parent::__construct($message, $code, $previous);
-		error_log($this->__toString());
-	}
+    public function __construct($message, $code = 0, ?Exception $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        error_log($this->__toString());
+    }
 
-	// Disabled custom string representation of the exception, it is worst than the default one.
-	// public function __toString() {
-	//     $prefix = '';
-	//     // return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
-	//     $message = strip_tags( $this->message );
-	//     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-	//     if( ! empty( $trace[1] ) ) {
-	//         $class = $trace[1]['class'] ?? '';
-	//         $function = $trace[1]['function'] ?? '';
-	//     }
-	//     if( ! empty( trim ( $class . $function ) ) ) {
-	//         $prefix .= '(' . ( empty( $class ) ? '' : $class . '::' ) . $function . ') ';
-	//     }
-	//     return $prefix . $message;
-	// }
+    // Disabled custom string representation of the exception, it is worst than the default one.
+    // public function __toString() {
+    //     $prefix = '';
+    //     // return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    //     $message = strip_tags( $this->message );
+    //     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+    //     if( ! empty( $trace[1] ) ) {
+    //         $class = $trace[1]['class'] ?? '';
+    //         $function = $trace[1]['function'] ?? '';
+    //     }
+    //     if( ! empty( trim ( $class . $function ) ) ) {
+    //         $prefix .= '(' . ( empty( $class ) ? '' : $class . '::' ) . $function . ') ';
+    //     }
+    //     return $prefix . $message;
+    // }
 }
 
 /**
@@ -55,9 +55,9 @@ class OpenSim_Exception extends Exception
  */
 class OpenSim_Error extends OpenSim_Exception
 {
-	public function __construct($message, $code = 0, ?Exception $previous = null)
-	{
-		parent::__construct($message, $code, $previous);
-		// error_log( $this->__toString() );
-	}
+    public function __construct($message, $code = 0, ?Exception $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        // error_log( $this->__toString() );
+    }
 }
