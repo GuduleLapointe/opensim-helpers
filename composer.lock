@@ -73,12 +73,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/GuduleLapointe/opensim-engine.git",
-                "reference": "7b49f4e5906f05352d891fcb265cdda24b724e54"
+                "reference": "e558fe40eff79d265eccbf54d9cf29c47d9bc2c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GuduleLapointe/opensim-engine/zipball/7b49f4e5906f05352d891fcb265cdda24b724e54",
-                "reference": "7b49f4e5906f05352d891fcb265cdda24b724e54",
+                "url": "https://api.github.com/repos/GuduleLapointe/opensim-engine/zipball/e558fe40eff79d265eccbf54d9cf29c47d9bc2c1",
+                "reference": "e558fe40eff79d265eccbf54d9cf29c47d9bc2c1",
                 "shasum": ""
             },
             "require": {
@@ -135,7 +135,7 @@
                 "issues": "https://github.com/GuduleLapointe/opensim-engine/issues",
                 "source": "https://github.com/GuduleLapointe/opensim-engine/tree/opensim-kit"
             },
-            "time": "2026-10-03T06:28:24+00:00"
+            "time": "2026-10-03T09:59:20+00:00"
         },
         {
             "name": "magicoli/opensim-rest-php",
