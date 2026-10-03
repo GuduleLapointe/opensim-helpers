@@ -1,8 +1,15 @@
 ## Changelog
 
-### Unreleased
+### 3.0.0-beta.2
 
-- new `includes/opensim-kit-config.php` is the `config.php` of an installation made with the OpenSim kit: the constants of the helpers are read by the engine from `opensim.conf`, the Robust config of the grid and its `helpers.ini` (the grid is the one named by `OPENSIM_GRID`, else the only one), with the databases of Robust unless `helpers.ini` gives others; the public path of each service (`/helpers/query.php`, `/search`...) is a setting of the kit
+- new `includes/opensim-kit-config.php` is the `config.php`, keeping the constants of the installation read by the engine from `opensim.conf`
+- fix(xmlrpc): xmlrpc_encode returns the XML like the extension
+- fix(xmlrpc): serve methods with the signature of the extension
+- docs: use with the OpenSim kit
+- chore(deps): lock the engine with the OAR class
+- chore(composer): lock from packagist again
+- chore(composer): lock on dev-opensim-kit of engine and rest-php
+- chore: update formatting rules, reindent composer.json
 
 ### 3.0.0-beta.1
 
