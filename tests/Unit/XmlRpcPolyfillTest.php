@@ -53,3 +53,9 @@ it('answers a fault for a method that is not registered', function () {
 
     expect($response)->toContain('<fault>');
 });
+
+it('encodes a value as the XML parameters of a response, like the extension', function () {
+    $xml = xmlrpc_encode(['success' => true]);
+
+    expect($xml)->toBeString()->toContain('<params>')->toContain('<name>success</name>');
+});

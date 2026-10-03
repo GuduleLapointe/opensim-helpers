@@ -70,7 +70,12 @@ function xmlrpc_server_register_method($server, $method, $function)
         for ($i = 0; $i < $request->getNumParams(); $i++) {
             $params[] = $encoder->decode($request->getParam($i));
         }
-        $result = $function($method, $params, xmlrpc_server_user_data());
+        try {
+            $result = $function($method, $params, xmlrpc_server_user_data());
+        } catch (\Throwable $e) {
+            error_log("xmlrpc $method: " . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            throw $e;
+        }
 
         return new Response($encoder->encode($result));
     });
@@ -161,8 +166,11 @@ function xmlrpc_decode($xml, $encoding = 'iso-8859-1')
  */
 function xmlrpc_encode($value)
 {
+    // Like the extension: the XML of the value as the parameters of a response, not the value object
     $encoder = new Encoder();
-    return $encoder->encode($value);
+
+    return '<?xml version="1.0" encoding="utf-8" ?>' . "\n<params>\n<param>\n" .
+        $encoder->encode($value)->serialize() . "</param>\n</params>\n";
 }
 
 /**
