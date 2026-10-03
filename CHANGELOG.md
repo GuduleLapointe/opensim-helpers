@@ -1,6 +1,6 @@
 ## Changelog
 
-### 3.0.0-beta.2
+### 3.0.0-beta.3
 
 - new `includes/opensim-kit-config.php` is the `config.php`, keeping the constants of the installation read by the engine from `opensim.conf`
 - fix(xmlrpc): xmlrpc_encode returns the XML like the extension
