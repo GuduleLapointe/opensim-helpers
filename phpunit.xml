@@ -12,6 +12,9 @@
 		<bootstrap class="Magicoli\PestFailureSummary\FailureSummaryExtension" />
 	</extensions>
 	<testsuites>
+		<testsuite name="Unit">
+			<directory>tests/Unit</directory>
+		</testsuite>
 		<testsuite name="Environment">
 			<directory>tests/Environment</directory>
 		</testsuite>

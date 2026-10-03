@@ -62,8 +62,36 @@ function xmlrpc_server_register_method($server, $method, $function)
         return false;
     }
 
-    $server->addHandler($method, $function);
+    // The extension calls function($method_name, $params, $user_data) and takes a PHP value as the answer;
+    // the library calls it with the request and wants a response: this is the one in the other.
+    $server->addToMap($method, function ($request) use ($method, $function) {
+        $encoder = new Encoder();
+        $params = [];
+        for ($i = 0; $i < $request->getNumParams(); $i++) {
+            $params[] = $encoder->decode($request->getParam($i));
+        }
+        $result = $function($method, $params, xmlrpc_server_user_data());
+
+        return new Response($encoder->encode($result));
+    });
+
     return true;
+}
+
+/**
+ * The user data of the call being served, which xmlrpc_server_call_method gives to the methods.
+ *
+ * @param mixed $set When given, the data of the call
+ * @return mixed
+ */
+function xmlrpc_server_user_data($set = null)
+{
+    static $data = null;
+    if (func_num_args() > 0) {
+        $data = $set;
+    }
+
+    return $data;
 }
 
 /**
@@ -87,38 +115,33 @@ function xmlrpc_decode($xml, $encoding = 'iso-8859-1')
         // Check if it's actually XML content
         if (preg_match('/<\?xml|<methodResponse|<methodCall|<value/', $xml)) {
             try {
-                // Try to decode it as XML-RPC response
-                $resp = new Response($xml);
-                if ($resp->faultCode() === 0) {
-                    return $encoder->decode($resp->value());
-                } else {
-                    return [
-                        'faultCode' => $resp->faultCode(),
-                        'faultString' => $resp->faultString(),
-                    ];
-                }
-            } catch (\Exception $e) {
-                // If direct response decoding fails, try using decodeXml
-                try {
-                    $result = $encoder->decodeXml($xml);
-                    if ($result instanceof \PhpXmlRpc\Value) {
-                        return $encoder->decode($result);
-                    } elseif ($result instanceof \PhpXmlRpc\Response) {
-                        if ($result->faultCode() === 0) {
-                            return $encoder->decode($result->value());
-                        } else {
-                            return [
-                                'faultCode' => $result->faultCode(),
-                                'faultString' => $result->faultString(),
-                            ];
-                        }
+                $result = $encoder->decodeXml($xml);
+                if ($result instanceof \PhpXmlRpc\Value) {
+                    return $encoder->decode($result);
+                } elseif ($result instanceof \PhpXmlRpc\Response) {
+                    if ($result->faultCode() === 0) {
+                        return $encoder->decode($result->value());
                     }
-                    return $result;
-                } catch (\Exception $e2) {
-                    // If all XML parsing fails, return the original string
-                    error_log('XML-RPC decoding error: ' . $e2->getMessage());
-                    return $xml;
+
+                    return [
+                        'faultCode' => $result->faultCode(),
+                        'faultString' => $result->faultString(),
+                    ];
+                } elseif ($result instanceof \PhpXmlRpc\Request) {
+                    $params = [];
+                    for ($i = 0; $i < $result->getNumParams(); $i++) {
+                        $params[] = $encoder->decode($result->getParam($i));
+                    }
+
+                    return $params;
                 }
+
+                // Not XML-RPC after all: the string as it came
+                return $result === false || $result === null ? $xml : $result;
+            } catch (\Exception $e) {
+                error_log('XML-RPC decoding error: ' . $e->getMessage());
+
+                return $xml;
             }
         } else {
             // Not valid XML, just return the string
@@ -188,6 +211,8 @@ function xmlrpc_server_call_method($server, $request, $user_data, $output_option
     if (!($server instanceof Server)) {
         return false;
     }
+
+    xmlrpc_server_user_data($user_data);
 
     // Process the request and get the response as a string
     $response = $server->service($request, true);
