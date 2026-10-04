@@ -103,13 +103,10 @@ define('CURRENCY_HELPER_URL', 'http://yourgrid.org/helpers/');
 // if (!defined('CURRENCY_HELPER_PATH')) define('CURRENCY_HELPER_PATH', dirname(__DIR__));
 
 /**
- * Timezone settings. Leave commented if included in a larger project. You
+ * Timezone settings: the helpers use UTC. Set to false if included in a larger project, you
  * dont want to mess up with timezone randomly in the middle of a process!
  */
 define('OPENSIM_USE_UTC_TIME', true);
-if (OPENSIM_USE_UTC_TIME) {
-    date_default_timezone_set('UTC');
-}
 
 /**
  * OffLine messages DB credentials.
@@ -137,9 +134,3 @@ define('OFFLINE_MESSAGE_TBL', 'im_offline'); // Same DB as Offline Module V2?
  * (e.g. define custom values for addons here)
  */
 // define('MY_CONSTANT_NAME', 'my value');
-
-/**
- * DO NOT MAKE CHANGES BELOW THIS
- * Add your custom values above. This loads the helpers (their libraries, the database, the functions).
- */
-require_once __DIR__ . '/load.php';

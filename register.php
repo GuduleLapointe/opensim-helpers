@@ -19,7 +19,7 @@
  *   [OpenSimSearch](https://github.com/kcozens/OpenSimSearch)
  */
 
-require_once 'includes/config.php';
+require_once 'includes/bootstrap.php';
 require_once 'includes/search.php';
 
 if (!$SearchDB || !$SearchDB->connected) {

@@ -3,7 +3,7 @@
 ### Unreleased
 
 - new: `dev/build.sh` makes the Debian package and the zip
-- fix: a config made by hand from the example loads the helpers (`includes/load.php`)
+- update: the scripts load `includes/bootstrap.php` (libraries, config, database, functions), `config.php` only defines constants, a missing one is a 503
 - new: `index.php` router, `OPENSIM_ROUTES` sets the URL of each service
 - new: home and splash pages, Twig templates
 

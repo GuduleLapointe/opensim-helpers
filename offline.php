@@ -16,7 +16,7 @@
  *   http://www.weberdev.com/get_example-4372.html
  **/
 
-require_once 'includes/config.php';
+require_once 'includes/bootstrap.php';
 require_once 'includes/databases.php';
 
 if (!isset($OpenSimDB)) {

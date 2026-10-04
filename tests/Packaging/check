@@ -17,12 +17,15 @@ podman run --rm --memory=400m -v "$PWD/dist:/dist:ro" -v "$DEPS_ENGINE:/deps/eng
 status=0
 check() { if eval "$2"; then echo "   ok: $1"; else echo "   FAILED: $1"; status=1; fi; }
 # The helpers served from a folder as an unprivileged user, with a config made by hand from the example (no database)
-serve() { # folder, port
-    sed "s/define(.OPENSIM_DB., true)/define(\"OPENSIM_DB\", false)/" "$1/includes/config.example.php" >"$1/includes/config.php"
-    chmod 644 "$1/includes/config.php"
+start() { # folder, port
     (cd "$1" && runuser -u nobody -- php -S 127.0.0.1:$2 index.php >/tmp/serve-$2.log 2>&1 &)
     sleep 2
 }
+configure() { # folder
+    sed "s/define(.OPENSIM_DB., true)/define(\"OPENSIM_DB\", false)/" "$1/includes/config.example.php" >"$1/includes/config.php"
+    chmod 644 "$1/includes/config.php"
+}
+http_code() { curl -s -o /dev/null -w %{http_code} "http://127.0.0.1:$1/$2"; }
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq >/dev/null
 apt-get install -y -qq unzip curl /deps/rest/*.deb /deps/engine/*.deb /dist/*.deb >/dev/null 2>&1
@@ -32,13 +35,17 @@ check "its files are in /usr/share/opensim-helpers" "[ -f /usr/share/opensim-hel
 check "it has no config of its own, only the example" "[ ! -e /usr/share/opensim-helpers/includes/config.php ] && [ -f /usr/share/opensim-helpers/includes/config.example.php ]"
 check "the engine and rest-php come from their packages, by links" "[ -L /usr/share/opensim-helpers/vendor/magicoli/opensim-engine ] && [ -L /usr/share/opensim-helpers/vendor/magicoli/opensim-rest-php ] && [ -f /usr/share/opensim-helpers/vendor/magicoli/opensim-engine/bootstrap.php ]"
 check "the libraries it brings itself are in its vendor folder" "[ -d /usr/share/opensim-helpers/vendor/twig/twig ] && [ -d /usr/share/opensim-helpers/vendor/phpxmlrpc/phpxmlrpc ]"
-serve /usr/share/opensim-helpers 8091
-check "as an unprivileged user the home page answers" "[ \"\$(curl -s -o /dev/null -w %{http_code} http://127.0.0.1:8091/)\" = 200 ] && curl -s http://127.0.0.1:8091/ | grep -q \"Your Grid\""
-check "a URL it does not know is a 404 of its router" "[ \"\$(curl -s -o /dev/null -w %{http_code} http://127.0.0.1:8091/nope)\" = 404 ]"
+start /usr/share/opensim-helpers 8090
+check "without a config it says so: 503, not a crash" "[ \"\$(http_code 8090 \"\")\" = 503 ] && grep -q \"config.php is missing\" /tmp/serve-8090.log"
+configure /usr/share/opensim-helpers
+start /usr/share/opensim-helpers 8091
+check "as an unprivileged user the home page answers" "[ \"\$(http_code 8091 \"\")\" = 200 ] && curl -s http://127.0.0.1:8091/ | grep -q \"Your Grid\""
+check "a URL it does not know is a 404 of its router" "[ \"\$(http_code 8091 nope)\" = 404 ]"
 
 mkdir /tmp/zip && cd /tmp/zip && unzip -q /dist/*.zip
 check "the zip has the helpers and a complete vendor folder" "[ -f opensim-helpers/index.php ] && [ -f opensim-helpers/vendor/twig/twig/src/Environment.php ] && [ -f opensim-helpers/vendor/magicoli/opensim-engine/bootstrap.php ] && [ ! -L opensim-helpers/vendor/magicoli/opensim-engine ]"
 check "the zip has no composer.lock, no tests" "[ ! -e opensim-helpers/composer.lock ] && [ ! -e opensim-helpers/tests ]"
-serve /tmp/zip/opensim-helpers 8092
-check "from the zip the home page answers too" "[ \"\$(curl -s -o /dev/null -w %{http_code} http://127.0.0.1:8092/)\" = 200 ]"
+configure /tmp/zip/opensim-helpers
+start /tmp/zip/opensim-helpers 8092
+check "from the zip the home page answers too" "[ \"\$(http_code 8092 \"\")\" = 200 ]"
 exit $status'

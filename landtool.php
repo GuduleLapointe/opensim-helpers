@@ -18,7 +18,7 @@
  *   Fumi.Iseki for CMS/LMS '09 5/31
  */
 
-require_once 'includes/config.php';
+require_once 'includes/bootstrap.php';
 require_once 'includes/economy.php';
 
 // No user serviceable parts below #####################

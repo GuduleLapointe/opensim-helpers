@@ -15,7 +15,7 @@
  * @license     AGPLv3
  */
 
-require_once 'includes/config.php';
+require_once 'includes/bootstrap.php';
 
 header('Content-Type: text/plain; charset=utf-8');
 echo defined('OPENSIM_MOTD') && OPENSIM_MOTD ? OPENSIM_MOTD : sprintf('Welcome to %s, <USERNAME>!', OPENSIM_GRID_NAME);

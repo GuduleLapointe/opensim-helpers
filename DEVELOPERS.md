@@ -2,6 +2,10 @@
 
 **Never use code or concepts related to projects consuming this library**, it must be agnostic and work with any project.
 
+## Keep it simple
+
+The helpers are the most shared scripts of the community: whoever wrote the original `query.php`, or uses a modified one, must understand a change without reading ten files. No framework architecture. Each script starts with one `require_once 'includes/bootstrap.php'`, a short file that loads the libraries, then `includes/config.php`, then the database and the functions. `config.php` only defines constants, and without it the helpers answer 503 and say why in the log.
+
 ## Build
 
 `dev/build.sh` makes what the project distributes into `dist/`, from the last commit (it refuses when changes are not committed or when `composer.lock` is not up to date; `DIRTY=1` builds the last commit anyway):
