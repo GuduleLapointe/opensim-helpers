@@ -15,6 +15,7 @@ if (__FILE__ !== $_SERVER['SCRIPT_FILENAME']) {
     exit("I'm not that kind of girl, I don't want to be included.");
 }
 
+require_once __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/classes/init.php'; // Common to all main scripts
 require_once __DIR__ . '/classes/class-page.php'; // Specific, because we generate a page
 // require_once( __DIR__ . '/classes/class-form.php' ); // Specific, because we use forms

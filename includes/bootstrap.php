@@ -1,7 +1,7 @@
 <?php
 /**
- * What every script of the helpers loads first: their libraries, their settings (includes/config.php, which only defines
- * constants), then what they need to run, the database and the functions.
+ * What every script of the helpers loads first: their libraries, their settings (the config of the grid, or
+ * includes/config.php which only defines constants), then what they need to run, the database and the functions.
  *
  * @package     magicoli/opensim-helpers
  * @license     AGPLv3
@@ -14,13 +14,20 @@ if (!defined('OPENSIM_ENGINE')) {
 // The libraries first: a config of the former kind, which loads the database and the functions itself, needs them
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-// Without settings the helpers cannot know the grid: say it, to the log and to the caller
-if (!is_file(__DIR__ . '/config.php')) {
-    error_log('opensim-helpers: includes/config.php is missing, copy includes/config.example.php and edit it');
-    http_response_code(503);
-    die('Not properly configured');
+// The settings: constants in includes/config.php (the historic way), else the config of the grid in /etc/opensim/grids
+if (is_file(__DIR__ . '/config.php')) {
+    require_once __DIR__ . '/config.php';
+} else {
+    require_once dirname(__DIR__) . '/classes/class-grid-config.php';
+    $problem = OpenSim_Helpers_GridConfig::load();
+    // Without settings the helpers cannot know the grid: say it, to the log and to the caller
+    if ($problem !== null) {
+        error_log("opensim-helpers: $problem");
+        http_response_code(503);
+        die('Not properly configured');
+    }
+    unset($problem);
 }
-require_once __DIR__ . '/config.php';
 
 // What a config can leave out (a constant it defines wins)
 $defaults = [

@@ -1,28 +1,39 @@
 <?php
 /**
- * includes/bootstrap.php: loads the config, completes what it leaves out, refuses to run without a database.
- * Each case runs the bootstrap in its own process, in a copy of the includes with the config under test.
+ * includes/bootstrap.php: loads the config (includes/config.php, else the config of the grid), completes what it leaves
+ * out, refuses to run without a database. Each case runs the bootstrap in its own process, in a copy of the helpers
+ * with the config under test and an /etc of its own.
  */
 
 /**
  * Run the bootstrap with a config.
  *
- * @param string|null $config The content of config.php, null for none.
+ * @param string|null $config The content of includes/config.php, null for none.
+ * @param array<string,string> $grids The files of the grids, from etc/grids (Alpha/helpers.ini => content).
+ * @param array<string,string> $env Variables of the environment (OPENSIM_GRID).
  * @return array{out: string, err: string, constants: array<string,mixed>}
  */
-function bootstrap_with(?string $config)
+function bootstrap_with(?string $config, array $grids = [], array $env = [])
 {
     $root = sys_get_temp_dir() . '/helpers-bootstrap-' . bin2hex(random_bytes(4));
     mkdir("$root/includes", 0777, true);
+    mkdir("$root/classes", 0777, true);
+    mkdir("$root/etc/grids", 0777, true);
     foreach (glob(dirname(__DIR__, 2) . '/includes/*.php') ?: [] as $file) {
         if (!in_array(basename($file), ['config.php', 'config.example.php'], true)) {
             copy($file, "$root/includes/" . basename($file));
         }
     }
+    copy(dirname(__DIR__, 2) . '/classes/class-grid-config.php', "$root/classes/class-grid-config.php");
     symlink(dirname(__DIR__, 2) . '/vendor', "$root/vendor");
     if ($config !== null) {
         file_put_contents("$root/includes/config.php", "<?php\n$config\n");
     }
+    foreach ($grids as $file => $content) {
+        @mkdir(dirname("$root/etc/grids/$file"), 0777, true);
+        file_put_contents("$root/etc/grids/$file", $content);
+    }
+    file_put_contents("$root/opensim.conf", "[Defaults]\nDefaultProfile = test\n[test]\nEtcRoot = $root/etc\n");
     file_put_contents(
         "$root/run.php",
         '<?php require "includes/bootstrap.php"; echo json_encode(get_defined_constants(true)["user"]);',
@@ -33,6 +44,7 @@ function bootstrap_with(?string $config)
         [1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
         $pipes,
         $root,
+        ['PATH' => (string) getenv('PATH'), 'OPENSIM_CONF' => "$root/opensim.conf"] + $env,
     );
     $out = (string) stream_get_contents($pipes[1]);
     $err = (string) stream_get_contents($pipes[2]);
@@ -42,11 +54,18 @@ function bootstrap_with(?string $config)
     return ['out' => $out, 'err' => $err, 'constants' => json_decode($out, true) ?? []];
 }
 
-describe('Bootstrap', function () {
-    test('says so when there is no config', function () {
+/** A config made of the main database only. */
+const BOOTSTRAP_MAIN_DB = "define('OPENSIM_DB_HOST', '127.0.0.1'); define('OPENSIM_DB_NAME', 'grid');
+    define('OPENSIM_DB_USER', 'u'); define('OPENSIM_DB_PASS', 'p');";
+
+/** A helpers.ini giving a grid and its database. */
+const BOOTSTRAP_HELPERS_INI = "[Helpers]\ngrid_name = \"Alpha World\"\n[robust_db]\nhostname = \"127.0.0.1\"\nprefix = \"alpha\"\nuser = \"u\"\npassword = \"p\"\n";
+
+describe('Bootstrap with includes/config.php', function () {
+    test('says so when there is no config at all', function () {
         $run = bootstrap_with(null);
 
-        expect($run['out'])->toBe('Not properly configured')->and($run['err'])->toContain('config.php is missing');
+        expect($run['out'])->toBe('Not properly configured')->and($run['err'])->toContain('no includes/config.php');
     });
 
     test('says so when the config gives no database', function () {
@@ -56,11 +75,7 @@ describe('Bootstrap', function () {
     });
 
     test('completes a config made of the main database only', function () {
-        $run = bootstrap_with(
-            "define('OPENSIM_DB_HOST', '127.0.0.1'); define('OPENSIM_DB_NAME', 'grid');" .
-                "define('OPENSIM_DB_USER', 'u'); define('OPENSIM_DB_PASS', 'p');",
-        );
-        $c = $run['constants'];
+        $c = bootstrap_with(BOOTSTRAP_MAIN_DB)['constants'];
 
         expect($c)
             ->toHaveKey('OPENSIM_DB', true)
@@ -81,12 +96,9 @@ describe('Bootstrap', function () {
     });
 
     test('keeps what the config defines', function () {
-        $run = bootstrap_with(
-            "define('OPENSIM_DB_HOST', '127.0.0.1'); define('OPENSIM_DB_NAME', 'grid');" .
-                "define('OPENSIM_DB_USER', 'u'); define('OPENSIM_DB_PASS', 'p');" .
-                "define('SEARCH_DB_NAME', 'search'); define('CURRENCY_MONEY_TBL', 'mine');",
-        );
-        $c = $run['constants'];
+        $c = bootstrap_with(
+            BOOTSTRAP_MAIN_DB . "define('SEARCH_DB_NAME', 'search'); define('CURRENCY_MONEY_TBL', 'mine');",
+        )['constants'];
 
         expect($c['SEARCH_DB_NAME'])
             ->toBe('search')
@@ -106,5 +118,69 @@ describe('Bootstrap', function () {
             ->not->toBe('Not properly configured')
             ->and($run['constants'])
             ->not->toHaveKey('CURRENCY_DB_HOST');
+    });
+
+    test('is the config used when it exists, whatever the grids say', function () {
+        $c = bootstrap_with(BOOTSTRAP_MAIN_DB . "define('OPENSIM_GRID_NAME', 'From the file');", [
+            'Alpha/helpers.ini' => BOOTSTRAP_HELPERS_INI,
+        ])['constants'];
+
+        expect($c['OPENSIM_GRID_NAME'])->toBe('From the file');
+    });
+});
+
+describe('Bootstrap with the config of a grid', function () {
+    test('takes it when there is no includes/config.php', function () {
+        $c = bootstrap_with(null, ['Alpha/helpers.ini' => BOOTSTRAP_HELPERS_INI])['constants'];
+
+        expect($c['OPENSIM_GRID_NAME'])
+            ->toBe('Alpha World')
+            ->and($c['OPENSIM_DB_NAME'])
+            ->toBe('alpha')
+            ->and($c['SEARCH_DB_USER'])
+            ->toBe('u')
+            ->and($c['CURRENCY_MONEY_TBL'])
+            ->toBe('balances');
+    });
+
+    test('serves the grid the environment names', function () {
+        $grids = [
+            'Alpha/helpers.ini' => BOOTSTRAP_HELPERS_INI,
+            'Beta/helpers.ini' => str_replace('Alpha World', 'Beta World', BOOTSTRAP_HELPERS_INI),
+        ];
+
+        $c = bootstrap_with(null, $grids, ['OPENSIM_GRID' => 'Beta'])['constants'];
+
+        expect($c['OPENSIM_GRID_NAME'])->toBe('Beta World');
+    });
+
+    test('says so when several grids and none is named', function () {
+        $run = bootstrap_with(null, [
+            'Alpha/helpers.ini' => BOOTSTRAP_HELPERS_INI,
+            'Beta/helpers.ini' => BOOTSTRAP_HELPERS_INI,
+        ]);
+
+        expect($run['out'])
+            ->toBe('Not properly configured')
+            ->and($run['err'])
+            ->toContain('several grids')
+            ->toContain('Alpha, Beta')
+            ->toContain('OPENSIM_GRID');
+    });
+
+    test('says so when the grid named is not there', function () {
+        $run = bootstrap_with(null, ['Alpha/helpers.ini' => BOOTSTRAP_HELPERS_INI], ['OPENSIM_GRID' => 'Nowhere']);
+
+        expect($run['out'])
+            ->toBe('Not properly configured')
+            ->and($run['err'])
+            ->toContain('grid Nowhere not found')
+            ->toContain('Alpha');
+    });
+
+    test('says so when it gives no database', function () {
+        $run = bootstrap_with(null, ['Alpha/helpers.ini' => "[Helpers]\ngrid_name = \"Alpha\"\n"]);
+
+        expect($run['out'])->toBe('Not properly configured')->and($run['err'])->toContain('no database');
     });
 });

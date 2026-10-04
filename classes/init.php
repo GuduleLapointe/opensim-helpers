@@ -57,16 +57,8 @@ class OpenSim
     public function includes()
     {
         require_once OSHELPERS_DIR . 'classes/class-exception.php';
-        require_once OSHELPERS_DIR . 'includes/databases.php';
-        require_once OSHELPERS_DIR . 'includes/functions.php';
-
-        if (file_exists(OSHELPERS_DIR . 'includes/config.php')) {
-            try {
-                include_once OSHELPERS_DIR . 'includes/config.php';
-            } catch (Error $e) {
-                self::notify_error($e);
-            }
-        }
+        // The libraries, the config, the database and the functions, as for every script
+        require_once OSHELPERS_DIR . 'includes/bootstrap.php';
 
         $this->db_connect();
 

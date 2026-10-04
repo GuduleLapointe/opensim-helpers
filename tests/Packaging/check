@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tries the files of dist/ (made by dev/build.sh) in a clean container (podman): the Debian package installs with the
-# packages it needs, the helpers answer as an unprivileged user with a config made by hand, the zip does the same. Exits
-# non-zero when a check fails.
+# packages it needs, the helpers answer as an unprivileged user with the config of a grid or a config made by hand,
+# the zip does the same. Exits non-zero when a check fails.
 #
 #   tests/Packaging/check [base image]       default: Debian 12; docker.io/library/ubuntu:24.04 for another
 #   DEPS_ENGINE=folder DEPS_REST=folder      where the Debian packages of the other projects are
@@ -36,7 +36,16 @@ check "it has no config of its own, only the example" "[ ! -e /usr/share/opensim
 check "the engine and rest-php come from their packages, by links" "[ -L /usr/share/opensim-helpers/vendor/magicoli/opensim-engine ] && [ -L /usr/share/opensim-helpers/vendor/magicoli/opensim-rest-php ] && [ -f /usr/share/opensim-helpers/vendor/magicoli/opensim-engine/bootstrap.php ]"
 check "the libraries it brings itself are in its vendor folder" "[ -d /usr/share/opensim-helpers/vendor/twig/twig ] && [ -d /usr/share/opensim-helpers/vendor/phpxmlrpc/phpxmlrpc ]"
 start /usr/share/opensim-helpers 8090
-check "without a config it says so: 503, not a crash" "[ \"\$(http_code 8090 \"\")\" = 503 ] && grep -q \"config.php is missing\" /tmp/serve-8090.log"
+check "without a config it says so: 503, not a crash" "[ \"\$(http_code 8090 \"\")\" = 503 ] && grep -q \"no includes/config.php\" /tmp/serve-8090.log"
+mkdir -p /etc/opensim/grids/Alpha
+cp /usr/share/opensim-helpers/includes/helpers.example.ini /etc/opensim/grids/Alpha/helpers.ini
+chown root:nogroup /etc/opensim/grids/Alpha/helpers.ini
+chmod 640 /etc/opensim/grids/Alpha/helpers.ini
+start /usr/share/opensim-helpers 8093
+check "with the config of a grid, readable by the group of the web server, the home page answers" "[ \"\$(http_code 8093 \"\")\" = 200 ] && curl -s http://127.0.0.1:8093/ | grep -q \"Your Grid\""
+chmod 600 /etc/opensim/grids/Alpha/helpers.ini
+check "when the web server user cannot read it, it says so: 503" "[ \"\$(http_code 8093 \"\")\" = 503 ] && grep -q \"not readable by the web server user\" /tmp/serve-8093.log"
+rm -rf /etc/opensim
 configure /usr/share/opensim-helpers
 start /usr/share/opensim-helpers 8091
 check "as an unprivileged user the home page answers" "[ \"\$(http_code 8091 \"\")\" = 200 ] && curl -s http://127.0.0.1:8091/ | grep -q \"Your Grid\""
