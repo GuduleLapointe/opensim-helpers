@@ -7,7 +7,7 @@
 
 ### 3.0.0-beta.3
 
-- new `OPENSIM_MOTD` (`config.php`) is the text of `motd.php`, the message of the day Robust shows at login
+- new: `OPENSIM_MOTD` (`config.php`) is the message of the day `motd.php` gives
 - fix(xmlrpc): xmlrpc_encode returns the XML like the extension
 - fix(xmlrpc): serve methods with the signature of the extension
 - chore(deps): lock the engine with the OAR class
@@ -19,15 +19,15 @@
 
 First beta of the 3.0 helpers, on the engine and the REST library.
 
-- new the engine (`magicoli/opensim-engine`) and the REST client (`magicoli/opensim-rest-php`) are composer packages; the legacy composer tasks are moved in `legacy`
-- new the XML-RPC polyfill uses `phpxmlrpc/phpxmlrpc`, and a Laravel-backed configuration polyfill serves the legacy helpers
-- new `get_grid_info` accepts an external grid (cached, fetched once per grid in the same HTTP request); `osdb_cache_get()` and `osdb_cache_set()` give a persistent cache
-- new `directory_info.php` gives the statistics of the search directory, `textgen.php` creates a dynamic texture from a URL, `register.php` stops at once when the search database is not connected
+- new: engine and REST client are composer packages, legacy composer tasks moved to `legacy`
+- new: XML-RPC polyfill on `phpxmlrpc/phpxmlrpc`, Laravel-backed config polyfill for legacy helpers
+- new: `get_grid_info` accepts an external grid (cached), persistent cache `osdb_cache_get/set()`
+- new: `directory_info.php`, `textgen.php`; `register.php` stops when the search database is down
 - new `opensim_sanitize_uri()`, and `includes/config.php` is included when it exists
-- update PHP 8.2 is the minimum (composer platform 8.2.0), the code runs clean on PHP 8.2 to 8.5, the required extensions are declared
-- update the parcels use only the Laravel logic, and an exporter saves to the OpenSim database: the main code is free of the historical discrepancies of that database
-- update the code is formatted from `.editorconfig` and `.prettierrc.json` (single quotes, PSR-12), `${var}` syntax is replaced
+- update: PHP 8.2 minimum, runs clean on 8.2 to 8.5, extensions declared
+- update: parcels use only the Laravel logic, an exporter saves to the OpenSim database
+- update: code formatted from `.editorconfig` and `.prettierrc.json`, `${var}` syntax replaced
 - update tests: a pest suite checks the PHP minimum and compatibility
-- fix `opensim_format_tp()` hop links (a position is not mandatory, no scheme in a text link) and `opensim_link_region()` no longer crashes with incomplete arguments
-- fix the gatekeeper address has its scheme, `parser.php` does not warn when a region is offline, `eventsparser.php` does not crash on an undefined variable
-- fix an error notification displayed three times when a place search has no result, the XML error (expat error code 3) for empty search results, duplicate `TPLINK*` constants, wrong URLs in the cron example
+- fix: `opensim_format_tp()` hop links, `opensim_link_region()` crash on incomplete arguments
+- fix: gatekeeper address has its scheme, warnings and crash in `parser.php`, `eventsparser.php`
+- fix: error shown 3 times on an empty place search, expat error 3, duplicate `TPLINK*`, cron URLs
