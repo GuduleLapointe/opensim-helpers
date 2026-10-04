@@ -22,6 +22,10 @@ On Debian and Ubuntu: `sudo apt install php-cli php-curl php-intl php-mbstring p
 
 The `xmlrpc_*` functions, needed by OpenSimulator for the search, the currencies and the land exchanges, are not an extension to install: `includes/xmlrpc-polyfill.php` provides them on top of `phpxmlrpc/phpxmlrpc`.
 
+## URLs
+
+`index.php` is the single entry: a web server that sends it every URL it has no file for serves the helpers at any URL. The scripts answer under any prefix (`/helpers/query.php`), the services at the paths set by `OPENSIM_ROUTES` in `config.php` (`/search` for `query.php`, `/guide` for `guide.php`...), and two pages, `/` (home) and `/welcome` (the splash page of the viewer), are rendered from the Twig templates of `templates/twig/pages`. `OPENSIM_TEMPLATES_DIR` gives a folder of templates that replace them. The logo is `assets/logos/logo.svg` or `.png`, or `OPENSIM_GRID_LOGO_URL`.
+
 ## Configuration
 
 The scripts read their settings from the constants `includes/config.php` defines. Copy `includes/config.example.php` to `includes/config.php` and edit it: the grid (name, login URI), its databases, the currency, the message of the day (`OPENSIM_MOTD`).

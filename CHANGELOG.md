@@ -1,5 +1,10 @@
 ## Changelog
 
+### Unreleased
+
+- new: `index.php` router, `OPENSIM_ROUTES` sets the URL of each service
+- new: home and splash pages, Twig templates
+
 ### 3.0.0-beta.3
 
 - new `OPENSIM_MOTD` (`config.php`) is the text of `motd.php`, the message of the day Robust shows at login

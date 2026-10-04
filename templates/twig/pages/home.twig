@@ -1,0 +1,13 @@
+{% extends 'base.twig' %}
+{# The home page: the blocks to show are the ones included here, the ones that do not exist are left out. #}
+{% block content %}
+{% include 'blocks/grid-info.twig' ignore missing %}
+{% include 'blocks/grid-status.twig' ignore missing %}
+{% include 'blocks/popular-places.twig' ignore missing %}
+{% if login_uri %}
+<div class="block">
+<p>Add this grid to your viewer with its login address:</p>
+<p><code>{{ login_uri }}</code></p>
+</div>
+{% endif %}
+{% endblock %}

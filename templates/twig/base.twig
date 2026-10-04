@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ grid_name }}{% endblock %}</title>
+{% block style %}
+<style>
+:root { --bg: #f7f7f5; --fg: #1c1c1a; --muted: #66665f; --accent: #3a5ea8; --card: #fff; --line: #deded8; }
+@media (prefers-color-scheme: dark) {
+    :root { --bg: #151514; --fg: #ececea; --muted: #9a9a92; --accent: #8fb0f0; --card: #1f1f1d; --line: #34342f; }
+}
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, sans-serif; }
+main { max-width: 42rem; margin: 0 auto; padding: 2rem 1rem; text-align: center; }
+main img.logo { max-width: 12rem; max-height: 8rem; }
+h1 { font-size: 2rem; margin: .5rem 0; }
+.block { background: var(--card); border: 1px solid var(--line); border-radius: .5rem; padding: 1rem 1.25rem; margin: 1.25rem 0; text-align: left; }
+a { color: var(--accent); }
+</style>
+{% endblock %}
+</head>
+<body>
+<main>
+{% block header %}
+{% if logo_url %}<img class="logo" src="{{ logo_url }}" alt="{{ grid_name }}">{% endif %}
+<h1>{{ grid_name }}</h1>
+{% endblock %}
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

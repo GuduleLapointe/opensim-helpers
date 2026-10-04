@@ -18,6 +18,14 @@ define('OPENSIM_GRID_NAME', 'Your Grid');
 define('OPENSIM_LOGIN_URI', 'http://yourgrid.org:8002');
 define('OPENSIM_MAIL_SENDER', "no-reply@{$_SERVER['SERVER_NAME']}");
 // define('OPENSIM_GRID_LOGO_URL', "http://yougrid.org/logo.png");
+/**
+ * Routes: the URL of each service or page. index.php, the single entry of the helpers, serves what the web server
+ * has no file for. The scripts also answer under any prefix (/helpers/query.php). Pages: @home, @splash (the page
+ * the viewer shows before the login).
+ */
+// define('OPENSIM_ROUTES', ['/search' => 'query.php', '/guide' => 'guide.php', '/welcome' => '@splash']);
+// define('OPENSIM_TEMPLATES_DIR', '/path/to/your/templates'); // Twig templates that replace the default ones
+
 // define('OPENSIM_MOTD', 'Welcome to Your Grid, <USERNAME>!'); // message of the day, see motd.php
 
 define('HYPEVENTS_URL', preg_replace(':/$:', '', 'https://2do.directory/events'));

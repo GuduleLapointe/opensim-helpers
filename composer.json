@@ -23,7 +23,8 @@
         "ext-simplexml": "*",
         "phpxmlrpc/phpxmlrpc": "^4.11",
         "magicoli/opensim-rest-php": "^1.1",
-        "magicoli/opensim-engine": "^3.0@beta"
+        "magicoli/opensim-engine": "^3.0@beta",
+        "twig/twig": "^3.8"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
