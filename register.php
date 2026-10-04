@@ -70,9 +70,9 @@ switch ($service) {
         // Trigger parser for new host
         dontwait(); // make sure simulator doesn't pause start process
         sleep(2); // leave simulator start process some time before querying it
-        $scheme = $_SERVER['REQUEST_SCHEME'] ?? (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
-        $parser =
-            "$scheme://{$_SERVER['HTTP_HOST']}" . dirname($_SERVER['REQUEST_URI']) . '/parser.php';
+        $scheme =
+            $_SERVER['REQUEST_SCHEME'] ?? (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http');
+        $parser = "$scheme://{$_SERVER['HTTP_HOST']}" . dirname($_SERVER['REQUEST_URI']) . '/parser.php';
         $result = file_get_contents($parser);
         break;
 

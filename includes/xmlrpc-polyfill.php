@@ -169,8 +169,10 @@ function xmlrpc_encode($value)
     // Like the extension: the XML of the value as the parameters of a response, not the value object
     $encoder = new Encoder();
 
-    return '<?xml version="1.0" encoding="utf-8" ?>' . "\n<params>\n<param>\n" .
-        $encoder->encode($value)->serialize() . "</param>\n</params>\n";
+    return '<?xml version="1.0" encoding="utf-8" ?>' .
+        "\n<params>\n<param>\n" .
+        $encoder->encode($value)->serialize() .
+        "</param>\n</params>\n";
 }
 
 /**

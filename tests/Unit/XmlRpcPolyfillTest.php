@@ -17,8 +17,9 @@ it('serves a method with the signature of the extension, and answers with what i
     $server = xmlrpc_server_create();
     expect(xmlrpc_server_register_method($server, 'dir_places_query', 'xmlrpc_double'))->toBeTrue();
 
-    $request = '<?xml version="1.0"?><methodCall><methodName>dir_places_query</methodName><params><param><value><struct>'
-        . '<member><name>text</name><value><string>Welcome</string></value></member></struct></value></param></params></methodCall>';
+    $request =
+        '<?xml version="1.0"?><methodCall><methodName>dir_places_query</methodName><params><param><value><struct>' .
+        '<member><name>text</name><value><string>Welcome</string></value></member></struct></value></param></params></methodCall>';
     $level = ob_get_level();
     $handler = set_error_handler(static fn() => false);
     restore_error_handler();
@@ -36,9 +37,12 @@ it('serves a method with the signature of the extension, and answers with what i
     }
 
     $answer = xmlrpc_decode($response);
-    expect($answer['method'])->toBe('dir_places_query')
-        ->and($answer['text'])->toBe('Welcome!')
-        ->and($answer['data'])->toBe('the data');
+    expect($answer['method'])
+        ->toBe('dir_places_query')
+        ->and($answer['text'])
+        ->toBe('Welcome!')
+        ->and($answer['data'])
+        ->toBe('the data');
 });
 
 it('answers a fault for a method that is not registered', function () {
