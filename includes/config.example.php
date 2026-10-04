@@ -140,12 +140,6 @@ define('OFFLINE_MESSAGE_TBL', 'im_offline'); // Same DB as Offline Module V2?
 
 /**
  * DO NOT MAKE CHANGES BELOW THIS
- * Add your custom values above.
+ * Add your custom values above. This loads the helpers (their libraries, the database, the functions).
  */
-require_once 'databases.php';
-require_once 'functions.php';
-
-$currency_addon = dirname(__DIR__) . '/addons/' . CURRENCY_PROVIDER . '.php';
-if (file_exists($currency_addon)) {
-    require_once $currency_addon;
-}
+require_once __DIR__ . '/load.php';
