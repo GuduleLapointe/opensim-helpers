@@ -3,11 +3,11 @@
  * motd.php
  *
  * The message of the day, as plain text: what Robust shows when a user logs in, if `MessageUrl` of its
- * `[LoginService]` is this script (the OpenSim kit sets it). Robust reads it when it starts, and uses its
- * `WelcomeMessage` when the script does not answer.
+ * `[LoginService]` is this script. Robust reads it when it starts, and uses its `WelcomeMessage` when the
+ * script does not answer.
  *
- * The text is `motd` of `[Helpers]` in the `helpers.ini` of the grid, `\n` for a new line, `<USERNAME>` for
- * the name of the avatar.
+ * The text is OPENSIM_MOTD (see config.example.php), `\n` for a new line, `<USERNAME>` for the name of the
+ * avatar. Without one, a welcome to the grid.
  *
  * @package     magicoli/opensim-helpers
  * @author      Gudule Lapointe <gudule@speculoos.world>
@@ -15,14 +15,7 @@
  * @license     AGPLv3
  */
 
-define('OPENSIM_ENGINE', true);
-require_once __DIR__ . '/vendor/autoload.php';
-
-$settings = OpenSim_Kit::settings();
-if ($settings === null) {
-    http_response_code(503);
-    die('Not properly configured');
-}
+require_once 'includes/config.php';
 
 header('Content-Type: text/plain; charset=utf-8');
-echo $settings['options']['motd'] ?? sprintf('Welcome to %s, <USERNAME>!', $settings['grid_name']);
+echo defined('OPENSIM_MOTD') && OPENSIM_MOTD ? OPENSIM_MOTD : sprintf('Welcome to %s, <USERNAME>!', OPENSIM_GRID_NAME);

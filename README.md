@@ -22,22 +22,9 @@ On Debian and Ubuntu: `sudo apt install php-cli php-curl php-intl php-mbstring p
 
 The `xmlrpc_*` functions, needed by OpenSimulator for the search, the currencies and the land exchanges, are not an extension to install: `includes/xmlrpc-polyfill.php` provides them on top of `phpxmlrpc/phpxmlrpc`.
 
-## With the OpenSim kit
+## Configuration
 
-The [OpenSim kit](https://github.com/GuduleLapointe/opensim-kit) installs and configures them for a grid, nothing is to be edited by hand.
+The scripts read their settings from the constants `includes/config.php` defines. Copy `includes/config.example.php` to `includes/config.php` and edit it: the grid (name, login URI), its databases, the currency, the message of the day (`OPENSIM_MOTD`).
 
-```bash
-sudo apt install opensim-helpers          # the scripts, in /usr/share/opensim-helpers
-sudo opensim setup                        # a grid: the setup asks whether the helpers serve its economy and its search
-```
-
-The setup writes the `helpers.ini` of the grid (`/etc/opensim/grids/<grid>/helpers.ini`), which is all the helpers read: the grid, its web URL, the database (the one of Robust unless another one is given for a service), the path of the helpers on the web site (`/helpers` by default, any path you already use works) and, under `[Urls]`, the path of a service that has its own (`search = "/search"`, `guide = "/guide"`...). The Robust config of the grid tells the viewers where the services are (`economy`, `SearchURL`, `DestinationGuide`, `MessageUrl`).
-
-The web server is yours: the setup writes the configuration for Caddy, nginx and Apache in `/etc/opensim/grids/<grid>/web/` (`<grid>.caddyfile`, `<grid>-nginx.conf`, `<grid>-apache.conf`), to include in the site of the grid. `opensim web <grid>` tells where each service is, `opensim web <grid> check` asks each one, `opensim web <grid> snippet caddy|nginx|apache` writes the configuration again.
-
-With several grids on a machine, the virtual host of each one sets `OPENSIM_GRID` (the configuration files do), and the helpers read the settings of that grid.
-
-The message of the day (`motd.php`) is the `motd` of `[Helpers]` in the `helpers.ini` of the grid, `\n` for a new line and `<USERNAME>` for the name of the avatar.
-
-More in the [installation guide of the kit](https://github.com/GuduleLapointe/opensim-kit/blob/opensim-kit/INSTALLATION.md).
+An application that embeds the helpers (a WordPress plugin, a management tool) provides its own `includes/config.php`, which defines the same constants from the settings it manages. Nothing else is needed: the helpers work with any `config.php` that defines them.
 

@@ -2,10 +2,9 @@
 
 ### 3.0.0-beta.3
 
-- new `includes/opensim-kit-config.php` is the `config.php`, keeping the constants of the installation read by the engine from `opensim.conf`
+- new `OPENSIM_MOTD` (`config.php`) is the text of `motd.php`, the message of the day Robust shows at login
 - fix(xmlrpc): xmlrpc_encode returns the XML like the extension
 - fix(xmlrpc): serve methods with the signature of the extension
-- docs: use with the OpenSim kit
 - chore(deps): lock the engine with the OAR class
 - chore(composer): lock from packagist again
 - chore(composer): lock on dev-opensim-kit of engine and rest-php
@@ -13,7 +12,7 @@
 
 ### 3.0.0-beta.1
 
-First beta of the 3.0 helpers, on the engine and the REST library of the OpenSim kit.
+First beta of the 3.0 helpers, on the engine and the REST library.
 
 - new the engine (`magicoli/opensim-engine`) and the REST client (`magicoli/opensim-rest-php`) are composer packages; the legacy composer tasks are moved in `legacy`
 - new the XML-RPC polyfill uses `phpxmlrpc/phpxmlrpc`, and a Laravel-backed configuration polyfill serves the legacy helpers
