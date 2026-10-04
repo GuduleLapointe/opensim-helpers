@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "148312f90534dca94fc106bca341bb31",
+    "content-hash": "fd1831f34b3000e79ad76dbb16610368",
     "packages": [
         {
             "name": "laminas/laminas-escaper",
@@ -69,17 +69,11 @@
         },
         {
             "name": "magicoli/opensim-engine",
-            "version": "3.0.0-beta.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/GuduleLapointe/opensim-engine.git",
-                "reference": "3052f665355d69c6ff67e0d7791b8086d0c9c2fc"
-            },
+            "version": "3.x-dev",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/GuduleLapointe/opensim-engine/zipball/3052f665355d69c6ff67e0d7791b8086d0c9c2fc",
-                "reference": "3052f665355d69c6ff67e0d7791b8086d0c9c2fc",
-                "shasum": ""
+                "type": "path",
+                "url": "../opensim-engine",
+                "reference": "996ab492766cb2b3e8c5cc878d1bbc02d227cffb"
             },
             "require": {
                 "ext-curl": "*",
@@ -93,7 +87,7 @@
                 "ext-session": "*",
                 "ext-simplexml": "*",
                 "laminas/laminas-escaper": "^2.12@stable",
-                "magicoli/opensim-rest-php": "^1.1.1",
+                "magicoli/opensim-rest-php": "@dev",
                 "php": ">=8.2",
                 "phpxmlrpc/phpxmlrpc": "^4.11"
             },
@@ -109,18 +103,21 @@
             },
             "type": "library",
             "autoload": {
-                "files": [
-                    "includes/functions-escaping.php"
-                ],
                 "psr-4": {
                     "OpenSim\\Engine\\": "src/"
                 },
                 "classmap": [
-                    "class-kit.php",
                     "class-oar.php"
+                ],
+                "files": [
+                    "includes/functions-escaping.php"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "pest"
+                ]
+            },
             "license": [
                 "AGPL-3.0-or-later"
             ],
@@ -131,25 +128,18 @@
                 }
             ],
             "description": "OpenSimulator Engine - Framework-agnostic core functionality for OpenSim grids",
-            "support": {
-                "issues": "https://github.com/GuduleLapointe/opensim-engine/issues",
-                "source": "https://github.com/GuduleLapointe/opensim-engine/tree/3.0.0-beta.2"
-            },
-            "time": "2026-10-03T22:21:09+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "magicoli/opensim-rest-php",
-            "version": "1.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/GuduleLapointe/opensim-rest-php.git",
-                "reference": "8b364e03d731ca5f7bbbb46a4f00054043706759"
-            },
+            "version": "dev-opensim-kit",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/GuduleLapointe/opensim-rest-php/zipball/8b364e03d731ca5f7bbbb46a4f00054043706759",
-                "reference": "8b364e03d731ca5f7bbbb46a4f00054043706759",
-                "shasum": ""
+                "type": "path",
+                "url": "../opensim-rest-php",
+                "reference": "a42c67a4bd2bfbc0821a2e960e757b53241717eb"
             },
             "require": {
                 "ext-curl": "*",
@@ -170,7 +160,11 @@
                     "class-rest.php"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "pest"
+                ]
+            },
             "license": [
                 "AGPL-3.0-or-later"
             ],
@@ -181,11 +175,10 @@
                 }
             ],
             "description": "OpenSimulator REST PHP library and command-line client",
-            "support": {
-                "issues": "https://github.com/GuduleLapointe/opensim-rest-php/issues",
-                "source": "https://github.com/GuduleLapointe/opensim-rest-php/tree/1.1.1"
-            },
-            "time": "2026-10-03T21:54:32+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "phpxmlrpc/phpxmlrpc",
@@ -4679,7 +4672,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "magicoli/opensim-engine": 10,
+        "magicoli/opensim-engine": 20,
+        "magicoli/opensim-rest-php": 20,
         "phpcompatibility/php-compatibility": 20
     },
     "prefer-stable": true,
