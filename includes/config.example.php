@@ -4,6 +4,7 @@
  *
  * Helpers configuration
  * Rename this file as "config.php" before editing.
+ * A constant left out takes the default of bootstrap.php: only the main database is mandatory.
  *
  * @package		magicoli/opensim-helpers
  * @author 		Gudule Lapointe <gudule@speculoos.world>

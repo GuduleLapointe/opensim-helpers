@@ -4,7 +4,7 @@
 
 ## Keep it simple
 
-The helpers are the most shared scripts of the community: whoever wrote the original `query.php`, or uses a modified one, must understand a change without reading ten files. No framework architecture. Each script starts with one `require_once 'includes/bootstrap.php'`, a short file that loads the libraries, then `includes/config.php`, then the database and the functions. `config.php` only defines constants, and without it the helpers answer 503 and say why in the log.
+The helpers are the most shared scripts of the community: whoever wrote the original `query.php`, or uses a modified one, must understand a change without reading ten files. No framework architecture. Each script starts with one `require_once 'includes/bootstrap.php'`, a short file that loads the libraries, then `includes/config.php`, then the database and the functions. `config.php` only defines constants. A constant it leaves out takes the default of `bootstrap.php` (a service database is the main one), so a new constant does not break an existing config. The helpers answer 503 and say why in the log without a config, or without any database.
 
 ## Build
 

@@ -4,6 +4,8 @@
 
 - new: `dev/build.sh` makes the Debian package and the zip
 - update: the scripts load `includes/bootstrap.php` (libraries, config, database, functions), `config.php` only defines constants, a missing one is a 503
+- update: a constant the config leaves out takes a default, a service database the main one
+- fix: the helpers refuse to run without a database, and say so in the log
 - new: `index.php` router, `OPENSIM_ROUTES` sets the URL of each service
 - new: home and splash pages, Twig templates
 

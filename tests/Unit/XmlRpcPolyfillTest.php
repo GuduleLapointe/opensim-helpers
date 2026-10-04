@@ -26,13 +26,13 @@ it('serves a method with the signature of the extension, and answers with what i
     ob_start();
     xmlrpc_server_call_method($server, $request, 'the data');
     $response = ob_get_clean();
-    // The library leaves its own buffers and handlers: the test leaves what it found
+    // The library leaves its own buffers, and stacks the previous error handler on top of its own instead of
+    // removing it: the test leaves what it found
     while (ob_get_level() > $level) {
         ob_end_clean();
     }
-    $after = set_error_handler(static fn() => false);
-    restore_error_handler();
-    if ($after !== $handler) {
+    if ($handler !== null) {
+        restore_error_handler();
         restore_error_handler();
     }
 
