@@ -10,6 +10,21 @@ $composer = json_decode((string) file_get_contents("$root/composer.json"), true)
 $minimum = preg_replace('/^[^0-9]*/', '', $composer['require']['php'] ?? '');
 $newest = '8.5';
 
+/**
+ * The PHP files git knows and does not ignore: what .gitignore leaves out is not the code of the project.
+ *
+ * @return list<string> Absolute paths, none when this is not a checkout.
+ */
+function compat_php_files(string $root): array
+{
+    $files = [];
+    if (is_dir("$root/.git")) {
+        exec('git -C ' . escapeshellarg($root) . ' ls-files --cached --others --exclude-standard -- "*.php"', $files);
+    }
+
+    return array_values(array_filter(array_map(fn($file) => "$root/$file", $files), 'is_file'));
+}
+
 describe('PHP', function () use ($root, $composer, $minimum, $newest) {
     test('minimum declared in composer.json', function () use ($minimum) {
         expect($minimum)->toMatch('/^\d+\.\d+$/');
@@ -23,17 +38,21 @@ describe('PHP', function () use ($root, $composer, $minimum, $newest) {
         expect(version_compare(PHP_VERSION, $minimum, '>='))->toBeTrue();
     })->depends('minimum declared in composer.json');
 
-    test('code needs nothing newer, nothing deprecated up to the newest', function () use ($root, $minimum, $newest) {
-        // The files git knows and does not ignore (what .gitignore leaves out is not the project's code);
-        // the whole folder when it is not a checkout
-        $listed = [];
-        if (is_dir("$root/.git")) {
-            exec(
-                'git -C ' . escapeshellarg($root) . ' ls-files --cached --others --exclude-standard -- "*.php"',
-                $listed,
-            );
-            $listed = array_values(array_filter(array_map(fn($file) => "$root/$file", $listed), 'is_file'));
+    test('code has no brace glob flag, Alpine (musl, lerd) lacks it', function () use ($root) {
+        $needle = 'GLOB_' . 'BRACE'; // built, so that this file does not match itself
+        $found = [];
+        foreach (compat_php_files($root) as $file) {
+            if (str_contains((string) file_get_contents($file), $needle)) {
+                $found[] = str_replace("$root/", '', $file);
+            }
         }
+
+        expect($found)->toBe([]);
+    });
+
+    test('code needs nothing newer, nothing deprecated up to the newest', function () use ($root, $minimum, $newest) {
+        // The whole folder when it is not a checkout
+        $listed = compat_php_files($root);
 
         $command = [
             PHP_BINARY,
