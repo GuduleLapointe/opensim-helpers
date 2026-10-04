@@ -1,0 +1,19 @@
+# What a distribution of the project leaves out, among what git tracks (the zip, the Debian package, and its copy in the
+# vendor folder of another project; what .gitignore ignores is not there to begin with): /name is at the root, name is
+# anywhere, a glob is fine
+/.distignore
+/.editorconfig
+/.gitignore
+/.gpt-po
+/.libignore
+/.php-version
+/.phpactor.json
+/.prettierignore
+/.prettierrc.json
+/DEVELOPERS.md
+/dev
+/packaging
+/phpcs.xml.dist
+/phpunit.xml
+/tests
+/tools

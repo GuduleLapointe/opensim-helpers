@@ -1,0 +1,45 @@
+# The web helpers of an OpenSimulator grid, built by dev/build.sh (or apt-package) from build/opensim-helpers, prepared
+# by packaging/build. ${VERSION} comes from packaging/version.
+# A webroot in /usr/share/opensim-helpers, to be served by a web server (nothing is enabled by installing it): index.php
+# is its single entry. Its settings are the constants of includes/config.php, made by hand from includes/config.example.php
+# (or provided by what installs the helpers). The projects of the family it needs are their own packages
+# (opensim-engine, opensim-rest-php), linked into its vendor folder.
+name: opensim-helpers
+arch: all
+platform: linux
+version: ${VERSION}
+version_schema: semver
+section: web
+priority: optional
+maintainer: Gudule Lapointe <gudule@speculoos.world>
+description: |-
+  Web helpers of an OpenSimulator grid (economy, search, offline messages)
+  PHP scripts the viewers and the simulators query (economy, search, guide,
+  offline messages, message of the day) and the home and splash pages, installed
+  in /usr/share/opensim-helpers, to be served by a web server.
+homepage: https://github.com/GuduleLapointe/opensim-helpers
+license: AGPL-3.0-or-later
+
+depends:
+  - opensim-engine
+  - opensim-rest-php
+  - php-curl
+  - php-intl
+  - php-mbstring
+  - php-mysql
+  - php-xml
+suggests:
+  - caddy | nginx | apache2
+  - php-fpm | libapache2-mod-php
+  - php-imagick
+
+contents:
+  - src: build/opensim-helpers
+    dst: /usr/share/opensim-helpers
+    type: tree
+  - src: /usr/share/opensim-engine
+    dst: /usr/share/opensim-helpers/vendor/magicoli/opensim-engine
+    type: symlink
+  - src: /usr/share/opensim-rest-php
+    dst: /usr/share/opensim-helpers/vendor/magicoli/opensim-rest-php
+    type: symlink

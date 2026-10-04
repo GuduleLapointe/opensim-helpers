@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# dist/opensim-helpers-VERSION.zip: the project and its vendor folder (see packaging/stage), to unzip and use without
+# composer or any other tool.
+
+set -e
+cd "$(dirname "$0")/.."
+
+eval "$(packaging/version)"
+packaging/stage build/zip/opensim-helpers zip
+mkdir -p dist
+rm -f "dist/opensim-helpers-$VERSION.zip"
+(cd build/zip && zip -qr "$OLDPWD/dist/opensim-helpers-$VERSION.zip" opensim-helpers)
+echo "dist/opensim-helpers-$VERSION.zip"

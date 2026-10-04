@@ -10,3 +10,5 @@ includes/config.php
 wp-load.php
 .DS_Store
 .zed/
+/build/
+/dist/

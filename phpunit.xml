@@ -18,5 +18,8 @@
 		<testsuite name="Environment">
 			<directory>tests/Environment</directory>
 		</testsuite>
+		<testsuite name="Packaging">
+			<directory>tests/Packaging</directory>
+		</testsuite>
 	</testsuites>
 </phpunit>
