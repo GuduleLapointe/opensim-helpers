@@ -4,7 +4,8 @@
 # engine, helpers, kit): each one needs the previous one published.
 #
 #   dev/release.sh [VERSION]   the whole release, after one question: the release commit (.version, the family required
-#                              by version, CHANGELOG), the tag, the push to RELEASE_REMOTE (github), the zip, the
+#                              by version, CHANGELOG; its message is v<version> then the changelog, verbatim, like the
+#                              message of the tag), the tag, the push to RELEASE_REMOTE (github), the zip, the
 #                              publication (apt repository, GitHub release with the Debian packages and the zip), then the
 #                              next development version, pushed
 #   dev/release.sh status      what is done and what remains
@@ -33,9 +34,19 @@ tag_name() {
     last=$(git for-each-ref --sort=-creatordate --count=1 --format='%(refname:short)' refs/tags)
     [[ $last == v* ]] && echo "v$1" || echo "$1"
 }
-# The lines of a section of CHANGELOG.md (### title), without the title
+# The lines of a section of CHANGELOG.md (### title), verbatim, without the title and the blank lines around
 changelog_section() {
-    awk -v title="### $1" '$0 == title {on = 1; next} /^### / {on = 0} on' CHANGELOG.md
+    awk -v title="### $1" '
+        $0 == title {on = 1; next}
+        /^### / {on = 0}
+        on {lines[++n] = $0}
+        END {
+            first = 1
+            while (first <= n && lines[first] == "") first++
+            last = n
+            while (last >= first && lines[last] == "") last--
+            for (i = first; i <= last; i++) print lines[i]
+        }' CHANGELOG.md
 }
 # owner/name of the GitHub repository of the remote
 github_repo() {
@@ -92,7 +103,7 @@ tag_local=0
 tag_remote=0
 published=0
 git rev-parse -q --verify "refs/tags/$tag" >/dev/null && tag_local=1
-[[ $tag_local == 1 || $(git log -1 --format=%s) == "chore(release): $new" ]] && prepared=1
+[[ $tag_local == 1 || $(git log -1 --format=%s) == "v$new" ]] && prepared=1
 [[ -z "$(git ls-remote --tags "$remote" "refs/tags/$tag" 2>/dev/null)" ]] || tag_remote=1
 repo=$(github_repo)
 if [[ $tag_remote == 1 && -n "$repo" ]] && "$gh" release view "$tag" -R "$repo" --json assets -q '.assets[].name' 2>/dev/null | grep -q '\.zip$'; then
@@ -143,19 +154,18 @@ if [[ $prepared == 0 ]]; then
     git add .version CHANGELOG.md
     [[ ! -f composer.json ]] || git add composer.json
     [[ ! -f composer.lock ]] || git add composer.lock
-    git commit -q -m "chore(release): $new"
+    # The release commit and the tag say the same: v<version>, then the lines of the changelog, verbatim
+    git commit -q -m "v$new" -m "$(changelog_section "$new")"
     trap - ERR
 fi
 
 if [[ $tag_local == 0 ]]; then
-    [[ $(git log -1 --format=%s) == "chore(release): $new" ]] || die "HEAD is not the release commit of $new (commits were added after it)"
+    [[ $(git log -1 --format=%s) == "v$new" ]] || die "HEAD is not the release commit of $new (commits were added after it)"
     if grep -q '"type": "path"' composer.json 2>/dev/null; then
         die "composer.json still has local projects (dev/switch.sh release)"
     fi
-    # The message of the tag is the notes of the release: the section of the changelog
-    git tag -a "$tag" -m "$new
-
-$(changelog_section "$new")"
+    # The message of the tag is the notes of the release: the changelog
+    git tag -a "$tag" -m "v$new" -m "$(changelog_section "$new")"
 fi
 
 git push "$remote" "$branch"
