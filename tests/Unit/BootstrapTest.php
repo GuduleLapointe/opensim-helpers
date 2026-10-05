@@ -11,9 +11,10 @@
  * @param string|null $config The content of includes/config.php, null for none.
  * @param array<string,string> $grids The files of the grids, from etc/grids (Alpha/helpers.ini => content).
  * @param array<string,string> $env Variables of the environment (OPENSIM_GRID).
+ * @param string $before PHP code to run before the bootstrap (to stand for an extension).
  * @return array{out: string, err: string, constants: array<string,mixed>}
  */
-function bootstrap_with(?string $config, array $grids = [], array $env = [])
+function bootstrap_with(?string $config, array $grids = [], array $env = [], string $before = '')
 {
     $root = sys_get_temp_dir() . '/helpers-bootstrap-' . bin2hex(random_bytes(4));
     mkdir("$root/includes", 0777, true);
@@ -36,7 +37,7 @@ function bootstrap_with(?string $config, array $grids = [], array $env = [])
     file_put_contents("$root/opensim.conf", "[Defaults]\nDefaultProfile = test\n[test]\nEtcRoot = $root/etc\n");
     file_put_contents(
         "$root/run.php",
-        '<?php require "includes/bootstrap.php"; echo json_encode(get_defined_constants(true)["user"]);',
+        "<?php $before require \"includes/bootstrap.php\"; echo json_encode(get_defined_constants(true)[\"user\"]);",
     );
 
     $process = proc_open(
@@ -126,6 +127,19 @@ describe('Bootstrap with includes/config.php', function () {
         ])['constants'];
 
         expect($c['OPENSIM_GRID_NAME'])->toBe('From the file');
+    });
+});
+
+describe('Bootstrap where the xmlrpc extension is', function () {
+    test('does not declare its functions again', function () {
+        // The functions of the extension, stood for by functions of the same names
+        $extension =
+            'function xmlrpc_encode() {} function xmlrpc_decode() {} function xmlrpc_server_create() {}' .
+            ' function xmlrpc_server_register_method() {} function xmlrpc_server_call_method() {}';
+
+        $run = bootstrap_with(BOOTSTRAP_MAIN_DB, [], [], $extension);
+
+        expect($run['out'])->not->toContain('Fatal')->and($run['constants'])->toHaveKey('OPENSIM_GRID_NAME');
     });
 });
 

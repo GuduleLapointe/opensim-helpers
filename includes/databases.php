@@ -10,6 +10,8 @@
 
 class OSPDO extends PDO
 {
+    public $connected = false;
+
     public function __construct($dsn, $username = null, $password = null, $driver_options = null)
     {
         try {

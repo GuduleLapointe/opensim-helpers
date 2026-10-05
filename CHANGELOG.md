@@ -4,6 +4,7 @@
 
 - new: `dev/build.sh` makes the Debian package and the zip
 - update: the scripts load `includes/bootstrap.php` (libraries, config, database, functions), `config.php` only defines constants, a missing one is a 503
+- fix: the xmlrpc polyfill is loaded only without the extension, a server that has it got a 500
 - new: the config of the grid, `/etc/opensim/grids/<grid>/helpers.ini`, is read when there is no `includes/config.php`
 - update: `directory_info.php` and `classes/init.php` load the bootstrap
 - update: a constant the config leaves out takes a default, a service database the main one

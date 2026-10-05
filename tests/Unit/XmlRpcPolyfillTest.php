@@ -4,8 +4,10 @@
  */
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-define('OS_XMLRPC_FORCE_REPLACE', true);
-require_once dirname(__DIR__, 2) . '/includes/xmlrpc-polyfill.php';
+// Where the extension is, its functions answer instead, which is what the polyfill imitates
+if (!function_exists('xmlrpc_encode')) {
+    require_once dirname(__DIR__, 2) . '/includes/xmlrpc-polyfill.php';
+}
 
 function xmlrpc_double($method, $params, $app_data)
 {

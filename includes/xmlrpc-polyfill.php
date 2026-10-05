@@ -9,10 +9,8 @@
  * @see https://php.watch/versions/8.0/xmlrpc
  */
 
-// Check if the XML RPC is already available, if so, don't override the functions
-if (function_exists('xmlrpc_encode') && !defined('OS_XMLRPC_FORCE_REPLACE')) {
-    return;
-}
+// Include this file only when the extension is missing (see functions.php): its functions are declared as soon as it is
+// compiled, a check here would come too late to avoid redeclaring those of the extension.
 
 // Check that the PhpXmlRpc library is available
 if (!class_exists('\\PhpXmlRpc\\Value')) {

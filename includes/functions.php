@@ -12,7 +12,10 @@
 
 use PhpXmlRpc\Encoder;
 
-require_once __DIR__ . '/xmlrpc-polyfill.php';
+// Only when the extension is missing: the functions of a file are declared when it is compiled, it cannot guard itself
+if (!function_exists('xmlrpc_encode')) {
+    require_once __DIR__ . '/xmlrpc-polyfill.php';
+}
 
 /**
  * Verify if given string is an UUID.
