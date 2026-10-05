@@ -15,16 +15,13 @@
 
 set -e
 cd "$(dirname "$0")/.."
+source dev/lib.sh
 
 remote=${RELEASE_REMOTE:-github}
 gh=${GH:-gh}
 branch=$(git branch --show-current)
 project=$(basename "$PWD")
 
-die() {
-    echo "dev/release.sh: $*" >&2
-    exit 1
-}
 version() {
     tr -d '[:space:]' <.version
 }
@@ -68,8 +65,8 @@ apt_package() {
 restore() {
     git checkout -q -- .version CHANGELOG.md composer.json composer.lock 2>/dev/null || true
 }
-mark() { # done|todo, what
-    printf '  [%s] %s\n' "$1" "$2"
+plan_item() { # done|todo, what
+    if [[ $1 == done ]]; then success "done: $2"; else log "to do: $2"; fi
 }
 
 [[ -z "$(git status --porcelain --untracked-files=no)" ]] || die "commit or stash your changes first:
@@ -113,18 +110,17 @@ fi
 # A project with nothing under Unreleased and no release in progress has nothing to release: not an error
 if [[ $prepared == 0 ]] && ! { grep -qx '### Unreleased' CHANGELOG.md && [[ -n "$(changelog_section Unreleased | tr -d '[:space:]')" ]]; }; then
     last=$(git describe --tags --abbrev=0 --match '[0-9]*' --match 'v[0-9]*' 2>/dev/null || echo none)
-    echo "$project: nothing to release, CHANGELOG.md has nothing under Unreleased (last release: $last). Write what changed, then run again."
-    exit 0
+    end 0 "$project: nothing to release, CHANGELOG.md has nothing under Unreleased (last release: $last). Write what changed, then run again."
 fi
 
 show_plan() {
-    echo "$project $new (tag $tag), then $next"
-    [[ $prepared == 1 ]] && mark done "release commit" || mark todo "release commit: .version, the family by version, CHANGELOG"
-    [[ $tag_local == 1 ]] && mark done "tag $tag" || mark todo "tag $tag"
-    [[ $tag_remote == 1 ]] && mark done "pushed to $remote" || mark todo "push to $remote"
-    [[ $published == 1 ]] && mark done "published (GitHub release with the zip)" ||
-        mark todo "zip, Debian packages, publication: apt repository, GitHub release with the packages and the zip"
-    [[ $tag_local == 1 && $current != "$new" ]] && mark done "next version $current" || mark todo "next version $next, the family linked again, pushed"
+    log "$project $new (tag $tag), then $next"
+    [[ $prepared == 1 ]] && plan_item done "release commit" || plan_item todo "release commit: .version, the family by version, CHANGELOG"
+    [[ $tag_local == 1 ]] && plan_item done "tag $tag" || plan_item todo "tag $tag"
+    [[ $tag_remote == 1 ]] && plan_item done "pushed to $remote" || plan_item todo "push to $remote"
+    [[ $published == 1 ]] && plan_item done "published (GitHub release with the zip)" ||
+        plan_item todo "zip, Debian packages, publication: apt repository, GitHub release with the packages and the zip"
+    [[ $tag_local == 1 && $current != "$new" ]] && plan_item done "next version $current" || plan_item todo "next version $next, the family linked again, pushed"
 }
 
 if [[ ${1:-} == status ]]; then
@@ -134,15 +130,12 @@ fi
 
 # What is needed, before anything is done
 [[ -n "$repo" ]] || die "the remote $remote is not a GitHub repository (RELEASE_REMOTE=name)"
-git remote get-url "$remote" >/dev/null 2>&1 || die "no remote named $remote (RELEASE_REMOTE=name)"
+require "$gh" nfpm composer php
 "$gh" auth status >/dev/null 2>&1 || die "gh is not logged in (gh auth login): the GitHub release needs it"
 [[ -n "$(apt_package)" ]] || die "apt-package is not installed (the apt-repo project)"
-command -v nfpm >/dev/null || die "nfpm is not installed (https://nfpm.goreleaser.com)"
+
 show_plan
-if [[ -z "${RELEASE_YES:-}" ]]; then
-    read -r -p "Go on? [y/N] " answer
-    [[ $answer == [yY]* ]] || die "stopped, nothing done"
-fi
+[[ -n "${RELEASE_YES:-}" ]] || yesno "Go on?" || die "stopped, nothing done"
 
 if [[ $prepared == 0 ]]; then
     [[ -z "$(git tag -l "$new" "v$new")" ]] || die "the tag $new exists already"
@@ -176,10 +169,11 @@ git push "$remote" "$branch"
 work=tmp/release-$tag
 cleanup() {
     git worktree remove --force "$work" 2>/dev/null || true
+    rm -f "$TMP" "$TMP".* "$LOCK"
 }
 trap cleanup EXIT
-cleanup
-mkdir -p tmp
+git worktree remove --force "$work" 2>/dev/null || true
+mkdir -p tmp dist build
 git worktree add -q --detach "$work" "$tag"
 while IFS= read -r entry; do
     entry=${entry%/}
@@ -207,12 +201,11 @@ for deb in dist/*_"${DEB_VERSION}"_*.deb; do
     [[ ! -e "$deb" ]] || assets+=("$deb")
 done
 "$gh" release upload "$tag" "${assets[@]}" -R "$repo" --clobber
-echo "Published: https://github.com/$repo/releases/tag/$tag"
+success "Published: https://github.com/$repo/releases/tag/$tag"
 
 # The next development version, unless it was already done
 if [[ $(version) != "$new" ]]; then
-    echo "$project $new is released, $(version) is already the version in progress."
-    exit 0
+    end 0 "$project $new is released, $(version) is already the version in progress."
 fi
 trap restore ERR
 echo "$next" >.version
@@ -225,4 +218,4 @@ git add .version CHANGELOG.md
 git commit -q -m "chore(version): $next, the family linked again"
 trap - ERR
 git push "$remote" "$branch"
-echo "$project $new is released, now at $next."
+success "$project $new is released, now at $next."

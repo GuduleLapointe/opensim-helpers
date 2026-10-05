@@ -9,16 +9,17 @@
 
 set -e
 cd "$(dirname "$0")/.."
+source dev/lib.sh
 
 mode=${1:-}
 if [[ $mode != dev && $mode != release ]]; then
-    echo "usage: dev/switch.sh dev|release" >&2
+    USAGE="dev/switch.sh dev|release"
+    usage >&2
     exit 2
 fi
 names=$(awk '!/^#/ && NF {print $1}' packaging/siblings 2>/dev/null || true)
 if [[ -z "$names" ]]; then
-    echo "dev/switch.sh: this project requires none of the family, nothing to switch"
-    exit 0
+    end 0 "this project requires none of the family, nothing to switch"
 fi
 
 # The files of a project changed since a release that are in its packages (not the version, the changelog, composer,
@@ -43,12 +44,11 @@ for name in $names; do
         value="$folder/"
     else
         tag=$(git -C "$folder" describe --tags --abbrev=0 --match '[0-9]*' --match 'v[0-9]*' 2>/dev/null) ||
-            { echo "dev/switch.sh: $name has no release, no version tag in $folder" >&2; exit 1; }
+            die "$name has no release, no version tag in $folder"
         changed=$(packaged_changes "$folder" "$tag")
         if [[ -n "$changed" ]]; then
-            echo "dev/switch.sh: $name has changed since its release $tag: release it first (cd $folder && dev/release.sh):" >&2
-            sed 's/^/    /' <<<"$changed" >&2
-            exit 1
+            die "$name has changed since its release $tag: release it first (cd $folder && dev/release.sh):
+$(sed 's/^/    /' <<<"$changed")"
         fi
         value="^${tag#v}"
     fi
@@ -112,9 +112,9 @@ end=$((SECONDS + ${SWITCH_WAIT:-1200}))
 until output=$(composer update $names --no-interaction 2>&1); do
     if [[ $mode == dev || $SECONDS -ge $end ]]; then
         echo "$output" >&2
-        exit 1
+        die "composer could not update $names"
     fi
-    echo "Composer cannot resolve the versions yet ($((end - SECONDS)) s left before giving up): $(grep -m1 -iE 'problem|could not|cannot|error' <<<"$output" | cut -c1-200)"
+    log "Composer cannot resolve the versions yet ($((end - SECONDS)) s left before giving up): $(grep -m1 -iE 'problem|could not|cannot|error' <<<"$output" | cut -c1-200)"
     sleep 20
 done
-echo "composer.json and composer.lock: $mode"
+success "composer.json and composer.lock: $mode"

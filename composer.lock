@@ -73,7 +73,7 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-engine",
-                "reference": "e5d9e50d990fa98f24f84b1993e991b24d0f6137"
+                "reference": "b25d8fa418e1b53659f6fc743065fc51a97a3f76"
             },
             "require": {
                 "ext-curl": "*",
@@ -140,7 +140,7 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-rest-php",
-                "reference": "ee92e06cc1492cd8517dd0278bf9d7e8930b83d5"
+                "reference": "e41f7496fcebe6af853342349c1e50611a51a9a1"
             },
             "require": {
                 "ext-curl": "*",
