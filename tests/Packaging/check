@@ -91,6 +91,13 @@ configure /usr/share/opensim-helpers
 start /usr/share/opensim-helpers 8091
 check "as an unprivileged user the home page answers" "[ \"\$(http_code 8091 \"\")\" = 200 ] && curl -s http://127.0.0.1:8091/ | grep -q \"Your Grid\""
 check "a URL it does not know is a 404 of its router" "[ \"\$(http_code 8091 nope)\" = 404 ]"
+# Where the xmlrpc extension is installed (a server may have it), the polyfill must not declare its functions again
+if apt-get install -y -qq php-xmlrpc >/dev/null 2>&1; then
+    start /usr/share/opensim-helpers 8094
+    check "with the xmlrpc extension installed the home page answers too" "php -m | grep -qi xmlrpc && [ \"\$(http_code 8094 \"\")\" = 200 ]"
+else
+    echo "   skipped: php-xmlrpc is not available on this system"
+fi
 previous opensim-helpers opensim-engine opensim-rest-php
 dpkg -i /dist/opensim-helpers_*.deb >/dev/null 2>&1
 check "an upgrade from a version that bundled the libraries leaves links, not empty folders" "[ -L /usr/share/opensim-helpers/vendor/magicoli/opensim-engine ] && [ -L /usr/share/opensim-helpers/vendor/magicoli/opensim-rest-php ] && [ -f /usr/share/opensim-helpers/vendor/magicoli/opensim-engine/bootstrap.php ] && [ -f /usr/share/opensim-helpers/vendor/magicoli/opensim-rest-php/class-rest.php ]"
