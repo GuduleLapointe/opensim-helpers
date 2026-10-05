@@ -1,5 +1,5 @@
 # The web helpers of an OpenSimulator grid, built by dev/build.sh (or apt-package) from build/opensim-helpers, prepared
-# by packaging/build. ${VERSION} comes from packaging/version.
+# by packaging/build. ${VERSION} comes from build-tools.
 # A webroot in /usr/share/opensim-helpers, to be served by a web server (nothing is enabled by installing it): index.php
 # is its single entry. Its settings are the constants of includes/config.php, made by hand from includes/config.example.php
 # (or provided by what installs the helpers). The projects of the family it needs are their own packages

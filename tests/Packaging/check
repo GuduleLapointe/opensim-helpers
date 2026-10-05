@@ -14,7 +14,8 @@ set -eo pipefail
 BASE=${1:-docker.io/library/debian:bookworm}
 cd "$(dirname "$0")/../.."
 BASE_DIR=$PWD
-source dev/lib.sh
+[[ -f vendor/bin/bash-helpers ]] || { echo "bash-tools is not installed: composer install" >&2; exit 1; }
+source vendor/bin/bash-helpers
 
 # The environment of the project (.env) and the one of the tests (tests/.env): CONTAINER_CONNECTION, MEMORY...
 ENV_SLUG=tests read_env || true

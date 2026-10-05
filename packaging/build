@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
-# Prepares what the Debian package installs, in build/opensim-helpers (see packaging/stage). Run by apt-package from the
-# project root, or by dev/build.sh. The version goes to build/packaging.env.
+# Prepares what the Debian package installs, in build/opensim-helpers (build-tools stage). Run by apt-package from the
+# project root, or by dev/build.sh.
 
 set -e
 cd "$(dirname "$0")/.."
 
-mkdir -p build
-packaging/version >build/packaging.env
-packaging/stage build/opensim-helpers deb
+vendor/bin/build-tools stage build/opensim-helpers deb

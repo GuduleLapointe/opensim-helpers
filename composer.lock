@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40727701c3276e4ab5e5fc6a99cf94a0",
+    "content-hash": "7bf1518be6565ea906292faa8c2b5fc1",
     "packages": [
         {
             "name": "laminas/laminas-escaper",
@@ -73,7 +73,7 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-engine",
-                "reference": "f6d1840f91285ccc6143455f548ed8f3a00c1616"
+                "reference": "0a62a92919a2863f1491aaa98726674a04d9fd1e"
             },
             "require": {
                 "ext-curl": "*",
@@ -93,7 +93,8 @@
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
-                "magicoli/bash-tools": "^1.0.6",
+                "magicoli/bash-tools": "^1.0.7",
+                "magicoli/build-tools": "^0.1.2",
                 "magicoli/pest-failure-summary": "^1.0",
                 "pestphp/pest": "^3.0",
                 "phpcompatibility/php-compatibility": "dev-develop",
@@ -140,7 +141,7 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-rest-php",
-                "reference": "de70c472a7f9f8762cd2935d677756155cc9643b"
+                "reference": "9a4b5da1b9818f68c749057c8a4c7315f14c7946"
             },
             "require": {
                 "ext-curl": "*",
@@ -150,7 +151,8 @@
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
-                "magicoli/bash-tools": "^1.0.6",
+                "magicoli/bash-tools": "^1.0.7",
+                "magicoli/build-tools": "^0.1.1",
                 "magicoli/pest-failure-summary": "^1.0",
                 "pestphp/pest": "^3.0",
                 "phpcompatibility/php-compatibility": "dev-develop",
@@ -996,16 +998,16 @@
         },
         {
             "name": "magicoli/bash-tools",
-            "version": "1.0.6",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magicoli/bash-tools.git",
-                "reference": "b4425142a024b9413686e19e126d1c256b32a8cb"
+                "reference": "60ecf4fa3c4ab9144251428e7bf784c0aa4aff10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magicoli/bash-tools/zipball/b4425142a024b9413686e19e126d1c256b32a8cb",
-                "reference": "b4425142a024b9413686e19e126d1c256b32a8cb",
+                "url": "https://api.github.com/repos/magicoli/bash-tools/zipball/60ecf4fa3c4ab9144251428e7bf784c0aa4aff10",
+                "reference": "60ecf4fa3c4ab9144251428e7bf784c0aa4aff10",
                 "shasum": ""
             },
             "bin": [
@@ -1041,9 +1043,49 @@
             "description": "Eclectic collection of bash tools and helpers.",
             "support": {
                 "issues": "https://github.com/magicoli/bash-tools/issues",
-                "source": "https://github.com/magicoli/bash-tools/tree/1.0.6"
+                "source": "https://github.com/magicoli/bash-tools/tree/1.0.7"
             },
-            "time": "2026-10-05T15:18:25+00:00"
+            "time": "2026-10-05T18:34:19+00:00"
+        },
+        {
+            "name": "magicoli/build-tools",
+            "version": "0.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magicoli/build-tools.git",
+                "reference": "c8cb6588af519afb8c307a54f4634a0df9fc5104"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magicoli/build-tools/zipball/c8cb6588af519afb8c307a54f4634a0df9fc5104",
+                "reference": "c8cb6588af519afb8c307a54f4634a0df9fc5104",
+                "shasum": ""
+            },
+            "require": {
+                "magicoli/bash-tools": "^1.0.6"
+            },
+            "bin": [
+                "bin/build-tools",
+                "bin/apt-package",
+                "bin/apt-publish"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Olivier van Helden",
+                    "homepage": "https://magiiic.com"
+                }
+            ],
+            "description": "Build, release and publish a project: Debian packages, zip, GitHub release, apt repository.",
+            "support": {
+                "issues": "https://github.com/magicoli/build-tools/issues",
+                "source": "https://github.com/magicoli/build-tools/tree/0.1.2"
+            },
+            "time": "2026-10-05T21:50:02+00:00"
         },
         {
             "name": "magicoli/pest-failure-summary",
