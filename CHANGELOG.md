@@ -2,7 +2,7 @@
 
 ### Unreleased
 
-- new: `dev/switch.sh` and `dev/release.sh`, the steps of a release
+- new: `dev/release.sh` makes the whole release, `dev/switch.sh` the composer part
 - new: `dev/build.sh` makes the Debian package and the zip
 - update: the scripts load `includes/bootstrap.php` (libraries, config, database, functions), `config.php` only defines constants, a missing one is a 503
 - fix: the xmlrpc polyfill is loaded only without the extension, a server that has it got a 500

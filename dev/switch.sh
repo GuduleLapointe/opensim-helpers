@@ -3,8 +3,9 @@
 # composer.json, and updates composer.lock, so that nobody edits them by hand:
 #
 #   dev/switch.sh dev       the projects next to this one, linked (path repositories, @dev)
-#   dev/switch.sh release   their versions, from Packagist (^ the .version of each project, which must be released
-#                           and known by Packagist: the script waits for it, SWITCH_WAIT seconds, 180 by default)
+#   dev/switch.sh release   their last release, from Packagist: ^ the latest version tag of each project, which must
+#                           have nothing more than the files of its release. If composer does not find it, it is tried
+#                           again (the new tag may not be known yet) for SWITCH_WAIT seconds, 1200 by default, and says why
 
 set -e
 cd "$(dirname "$0")/.."
@@ -20,16 +21,18 @@ if [[ -z "$names" ]]; then
     exit 0
 fi
 
-# Whether Packagist knows a version of a package
-on_packagist() { # name version
-    curl -fsS --max-time 20 "https://repo.packagist.org/p2/$1.json" 2>/dev/null | php -r '
-        $json = json_decode(stream_get_contents(STDIN), true);
-        foreach ($json["packages"][$argv[1]] ?? [] as $package) {
-            if (ltrim($package["version"], "v") === $argv[2]) {
-                exit(0);
-            }
-        }
-        exit(1);' "$1" "$2"
+# The files of a project changed since a release that are in its packages (not the version, the changelog, composer,
+# nor what its .distignore leaves out)
+packaged_changes() { # folder, tag
+    local pattern
+    pattern=$(awk '!/^#/ && NF {
+        entry = $0; sub(/\/$/, "", entry)
+        if (entry ~ /[*?]/) next
+        gsub(/\./, "\\.", entry)
+        if (sub(/^\//, "", entry)) printf "%s^%s(/|$)", sep, entry; else printf "%s(^|/)%s(/|$)", sep, entry
+        sep = "|"
+    }' "$1/.distignore" 2>/dev/null)
+    git -C "$1" diff --name-only "$2" HEAD | grep -vE '^(\.version|CHANGELOG\.md|composer\.(json|lock))$' | { if [[ -n "$pattern" ]]; then grep -vE "$pattern" || true; else cat; fi; }
 }
 
 # The wanted value of each project: its folder (dev), or the constraint of its version (release)
@@ -39,35 +42,19 @@ for name in $names; do
     if [[ $mode == dev ]]; then
         value="$folder/"
     else
-        if [[ ! -s "$folder/.version" ]]; then
-            echo "dev/switch.sh: $folder/.version is missing" >&2
+        tag=$(git -C "$folder" describe --tags --abbrev=0 --match '[0-9]*' --match 'v[0-9]*' 2>/dev/null) ||
+            { echo "dev/switch.sh: $name has no release, no version tag in $folder" >&2; exit 1; }
+        changed=$(packaged_changes "$folder" "$tag")
+        if [[ -n "$changed" ]]; then
+            echo "dev/switch.sh: $name has changed since its release $tag: release it first (cd $folder && dev/release.sh):" >&2
+            sed 's/^/    /' <<<"$changed" >&2
             exit 1
         fi
-        version=$(tr -d '[:space:]' <"$folder/.version")
-        if [[ $version == *-dev ]]; then
-            echo "dev/switch.sh: $name is at $version, a development version: release it first (dev/release.sh in that project)" >&2
-            exit 1
-        fi
-        value="^$version"
+        value="^${tag#v}"
     fi
     spec+="\"$name\":\"$value\","
 done
 spec="${spec%,}}"
-
-# A released version is on Packagist before it is required: the tag of that project is pushed, Packagist takes a moment
-if [[ $mode == release ]]; then
-    end=$((SECONDS + ${SWITCH_WAIT:-180}))
-    while read -r name constraint; do
-        until on_packagist "$name" "${constraint#^}"; do
-            if [[ $SECONDS -ge $end ]]; then
-                echo "dev/switch.sh: Packagist does not know $name ${constraint#^} (is the tag pushed, and the package updated there?)" >&2
-                exit 1
-            fi
-            echo "Waiting for Packagist: $name ${constraint#^}"
-            sleep 10
-        done
-    done < <(php -r 'foreach (json_decode($argv[1], true) as $name => $constraint) { echo "$name $constraint\n"; }' "$spec")
-fi
 
 php -- "$mode" "$spec" <<'PHP'
 <?php
@@ -119,6 +106,15 @@ file_put_contents(
 );
 PHP
 
+# In release mode composer is tried again until it finds the versions, in case Packagist does not know the new tag yet
+end=$((SECONDS + ${SWITCH_WAIT:-1200}))
 # shellcheck disable=SC2086
-composer update $names --no-interaction --quiet
+until output=$(composer update $names --no-interaction 2>&1); do
+    if [[ $mode == dev || $SECONDS -ge $end ]]; then
+        echo "$output" >&2
+        exit 1
+    fi
+    echo "Composer cannot resolve the versions yet ($((end - SECONDS)) s left before giving up): $(grep -m1 -iE 'problem|could not|cannot|error' <<<"$output" | cut -c1-200)"
+    sleep 20
+done
 echo "composer.json and composer.lock: $mode"
