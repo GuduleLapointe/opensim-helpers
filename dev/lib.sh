@@ -13,7 +13,8 @@ done
     echo "${0##*/}: bash-helpers not found: composer install, bash-tools is a development dependency of the project" >&2
     exit 1
 }
-# bash-helpers is not made for set -e (what it ends with, read_env, returns 1 when APP_ENV is not set)
+# Before bash-tools 1.0.5, bash-helpers is not made for set -e (what it ends with, read_env, returns 1 when APP_ENV is not
+# set): kept for a package or a PATH copy older than the one of vendor
 _errexit=
 [[ $- == *e* ]] && _errexit=1
 set +e
