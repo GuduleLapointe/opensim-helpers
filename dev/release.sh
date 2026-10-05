@@ -70,6 +70,15 @@ apt_repo_dir() {
 signing_key() {
     awk '$1 == "SignWith:" {print $2; exit}' "$(apt_repo_dir)/conf/distributions" 2>/dev/null || true
 }
+# What needs the passphrase of the key fails when nobody answers the prompt in time (nobody stays in front of the screen
+# for a release): the failure is said, and trying again is offered, as long as wanted
+retry() { # what, command...
+    local what=$1
+    shift
+    until "$@"; do
+        yesno y "$what failed (the passphrase prompt may have timed out). Try again?" || die "$what failed, stopped"
+    done
+}
 # A step that fails leaves the files as they were
 restore() {
     git checkout -q -- .version CHANGELOG.md composer.json composer.lock 2>/dev/null || true
@@ -153,7 +162,8 @@ if [[ $published == 0 ]]; then
     key=$(signing_key)
     if [[ -n "$key" ]]; then
         log "Signing key $key: give its passphrase now, the publication needs it"
-        echo "release $project $new" | gpg --local-user "$key" --clearsign >/dev/null || die "cannot sign with the key $key (gpg): the packages could not be published"
+        sign_test() { echo "release $project $new" | gpg --local-user "$key" --clearsign >/dev/null; }
+        retry "The signature with the key $key" sign_test
     fi
 fi
 
@@ -207,7 +217,16 @@ done < <(
     dev/build.sh zip
     # The packages are published by apt-package: the apt repository, and the GitHub release (created from the tag, with
     # the packages and their signed checksums)
-    "$(apt_package)" --publish || die "the publication failed, see above. If reprepro could not export the indices (the signature), the packages are in its database but nobody sees them: reprepro -b $(apt_repo_dir) export, then run dev/release.sh again"
+    until "$(apt_package)" --publish 2>&1 | tee "$TMP.publish" && [[ ${PIPESTATUS[0]} == 0 ]]; do
+        if grep -q "Could not finish exporting" "$TMP.publish"; then
+            # The packages are in the database of reprepro but their indices are not signed: nobody sees them yet, only the
+            # export is to do again (apt-package would take them for published)
+            log "The packages are in the apt repository but their indices could not be signed, the repository looks as before"
+            retry "The export of the apt repository" reprepro -b "$(apt_repo_dir)" export
+            break
+        fi
+        yesno y "The publication failed, see above. Try again?" || die "the publication failed, stopped"
+    done
 )
 eval "$(cd "$work" && packaging/version)"
 cleanup
@@ -226,7 +245,7 @@ if [[ -n "$key" && ${#assets[@]} -gt 1 ]]; then
     names=()
     for asset in "${assets[@]:1}"; do names+=("${asset##*/}"); done
     (cd dist && shasum -a 256 "${names[@]}" >SHA256SUMS)
-    gpg --yes --armor --detach-sign --local-user "$key" --output dist/SHA256SUMS.asc dist/SHA256SUMS
+    retry "The signature of the checksums" gpg --yes --armor --detach-sign --local-user "$key" --output dist/SHA256SUMS.asc dist/SHA256SUMS
     assets+=(dist/SHA256SUMS dist/SHA256SUMS.asc)
 fi
 "$gh" release upload "$tag" "${assets[@]}" -R "$repo" --clobber
