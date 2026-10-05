@@ -61,6 +61,15 @@ apt_package() {
     done
     echo "${APT_PACKAGE:-$found}"
 }
+# The folder of the apt repository (apt-package is in its bin/), and the key its packages are signed with
+apt_repo_dir() {
+    local tool
+    tool=$(apt_package)
+    [[ -z "$tool" ]] || (cd "$(dirname "$(realpath "$tool" 2>/dev/null || echo "$tool")")/.." && pwd)
+}
+signing_key() {
+    awk '$1 == "SignWith:" {print $2; exit}' "$(apt_repo_dir)/conf/distributions" 2>/dev/null || true
+}
 # A step that fails leaves the files as they were
 restore() {
     git checkout -q -- .version CHANGELOG.md composer.json composer.lock 2>/dev/null || true
@@ -69,7 +78,7 @@ plan_item() { # done|todo, what
     if [[ $1 == done ]]; then success "done: $2"; else log "to do: $2"; fi
 }
 
-[[ -z "$(git status --porcelain --untracked-files=no)" ]] || die "commit or stash your changes first:
+[[ -z "$(git status --porcelain --untracked-files=no)" ]] || die "commit or stash your changes first. A release leaves nothing uncommitted, these were made by hand:
 $(git status --short --untracked-files=no)"
 
 current=$(version)
@@ -137,6 +146,17 @@ require "$gh" nfpm composer php
 show_plan
 [[ -n "${RELEASE_YES:-}" ]] || yesno "Go on?" || die "stopped, nothing done"
 
+# The packages are signed with a key whose passphrase is asked: asked now, while you are here and before anything is
+# pushed, and kept by the agent for the publication (a prompt left alone times out, and the publication stops half done)
+key=
+if [[ $published == 0 ]]; then
+    key=$(signing_key)
+    if [[ -n "$key" ]]; then
+        log "Signing key $key: give its passphrase now, the publication needs it"
+        echo "release $project $new" | gpg --local-user "$key" --clearsign >/dev/null || die "cannot sign with the key $key (gpg): the packages could not be published"
+    fi
+fi
+
 if [[ $prepared == 0 ]]; then
     [[ -z "$(git tag -l "$new" "v$new")" ]] || die "the tag $new exists already"
     trap restore ERR
@@ -187,7 +207,7 @@ done < <(
     dev/build.sh zip
     # The packages are published by apt-package: the apt repository, and the GitHub release (created from the tag, with
     # the packages and their signed checksums)
-    "$(apt_package)" --publish
+    "$(apt_package)" --publish || die "the publication failed, see above. If reprepro could not export the indices (the signature), the packages are in its database but nobody sees them: reprepro -b $(apt_repo_dir) export, then run dev/release.sh again"
 )
 eval "$(cd "$work" && packaging/version)"
 cleanup
@@ -200,6 +220,15 @@ assets=(dist/*"-$VERSION.zip")
 for deb in dist/*_"${DEB_VERSION}"_*.deb; do
     [[ ! -e "$deb" ]] || assets+=("$deb")
 done
+# apt-package signs the checksums of what it publishes; after an interrupted publication it publishes nothing more, so
+# they are made here, the same way
+if [[ -n "$key" && ${#assets[@]} -gt 1 ]]; then
+    names=()
+    for asset in "${assets[@]:1}"; do names+=("${asset##*/}"); done
+    (cd dist && shasum -a 256 "${names[@]}" >SHA256SUMS)
+    gpg --yes --armor --detach-sign --local-user "$key" --output dist/SHA256SUMS.asc dist/SHA256SUMS
+    assets+=(dist/SHA256SUMS dist/SHA256SUMS.asc)
+fi
 "$gh" release upload "$tag" "${assets[@]}" -R "$repo" --clobber
 success "Published: https://github.com/$repo/releases/tag/$tag"
 

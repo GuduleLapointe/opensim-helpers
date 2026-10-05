@@ -18,7 +18,8 @@ if ! composer validate --no-check-publish --no-check-all --no-interaction >/dev/
     die "composer.lock is not up to date with composer.json (composer update the packages that changed, commit):
 $(composer validate --no-check-publish --no-check-all --no-interaction 2>&1 || true)"
 fi
-untracked=$(git ls-files --others --exclude-standard)
+# (the links to the folders git ignores, which the release makes in its own folder, are not files of the project)
+untracked=$(git ls-files --others --exclude-standard | while IFS= read -r file; do [[ -L "$file" ]] || echo "$file"; done)
 [[ -z "$untracked" ]] || log "note: files git does not track are not in the build: $(tr '\n' ' ' <<<"$untracked")"
 
 formats=${*:-deb zip}
