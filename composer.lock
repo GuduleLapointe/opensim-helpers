@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5bd1424bcb90a55033b0c4519bec9ed1",
+    "content-hash": "40727701c3276e4ab5e5fc6a99cf94a0",
     "packages": [
         {
             "name": "laminas/laminas-escaper",
@@ -73,7 +73,7 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-engine",
-                "reference": "669db40b471c2cf94f7626b206827dc5f33f4e1b"
+                "reference": "698141f1be172114ecf3a9cbf33eac273ecdf209"
             },
             "require": {
                 "ext-curl": "*",
@@ -93,7 +93,7 @@
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
-                "magicoli/bash-tools": "^1.0.5",
+                "magicoli/bash-tools": "^1.0.6",
                 "magicoli/pest-failure-summary": "^1.0",
                 "pestphp/pest": "^3.0",
                 "phpcompatibility/php-compatibility": "dev-develop",
@@ -140,7 +140,7 @@
             "dist": {
                 "type": "path",
                 "url": "../opensim-rest-php",
-                "reference": "9d823dcbfa6dd82ddb0218848a4502c3f7d5981b"
+                "reference": "96a6903289c0ad109f9dff8ce6a44bd024bffe1d"
             },
             "require": {
                 "ext-curl": "*",
@@ -150,7 +150,7 @@
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^1.2",
-                "magicoli/bash-tools": "^1.0.5",
+                "magicoli/bash-tools": "^1.0.6",
                 "magicoli/pest-failure-summary": "^1.0",
                 "pestphp/pest": "^3.0",
                 "phpcompatibility/php-compatibility": "dev-develop",
@@ -996,16 +996,16 @@
         },
         {
             "name": "magicoli/bash-tools",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magicoli/bash-tools.git",
-                "reference": "28bc96a7bb9327c8996ec2c448290c7dda5277fe"
+                "reference": "b4425142a024b9413686e19e126d1c256b32a8cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magicoli/bash-tools/zipball/28bc96a7bb9327c8996ec2c448290c7dda5277fe",
-                "reference": "28bc96a7bb9327c8996ec2c448290c7dda5277fe",
+                "url": "https://api.github.com/repos/magicoli/bash-tools/zipball/b4425142a024b9413686e19e126d1c256b32a8cb",
+                "reference": "b4425142a024b9413686e19e126d1c256b32a8cb",
                 "shasum": ""
             },
             "bin": [
@@ -1041,9 +1041,9 @@
             "description": "Eclectic collection of bash tools and helpers.",
             "support": {
                 "issues": "https://github.com/magicoli/bash-tools/issues",
-                "source": "https://github.com/magicoli/bash-tools/tree/1.0.5"
+                "source": "https://github.com/magicoli/bash-tools/tree/1.0.6"
             },
-            "time": "2026-10-05T14:58:00+00:00"
+            "time": "2026-10-05T15:18:25+00:00"
         },
         {
             "name": "magicoli/pest-failure-summary",
