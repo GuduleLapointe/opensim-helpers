@@ -22,8 +22,8 @@
         "ext-session": "*",
         "ext-simplexml": "*",
         "phpxmlrpc/phpxmlrpc": "^4.11",
-        "magicoli/opensim-rest-php": "^1.1.2",
-        "magicoli/opensim-engine": "^3.0.0-beta.4",
+        "magicoli/opensim-rest-php": "@dev",
+        "magicoli/opensim-engine": "@dev",
         "twig/twig": "^3.8"
     },
     "require-dev": {
@@ -34,6 +34,24 @@
         "squizlabs/php_codesniffer": "^4.0",
         "magicoli/bash-tools": "^1.0.6"
     },
+    "repositories": [
+        {
+            "name": "magicoli/opensim-engine",
+            "url": "../opensim-engine/",
+            "type": "path",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "name": "magicoli/opensim-rest-php",
+            "url": "../opensim-rest-php/",
+            "type": "path",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "minimum-stability": "dev",
     "scripts": {
         "test": "pest"
