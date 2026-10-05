@@ -1,6 +1,6 @@
 ## Changelog
 
-### Unreleased
+### 3.0.0-beta.5
 
 - update: `dev/` runs [build-tools](https://github.com/magicoli/build-tools) instead of its own copy of the scripts
 - update: [bash-tools](https://github.com/magicoli/bash-tools) 1.0.7 in require-dev, the scripts use its functions
