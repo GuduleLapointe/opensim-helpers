@@ -12,3 +12,11 @@ wp-load.php
 .zed/
 /build/
 /dist/
+**/.env
+.env
+.envrc
+.env.*
+.envrc.*
+!.env*.example
+.venv/
+venv/
