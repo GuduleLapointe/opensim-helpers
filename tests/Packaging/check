@@ -8,10 +8,23 @@
 #                                            (default: ../opensim-engine/dist, ../opensim-rest-php/dist)
 #   CONTAINER_CONNECTION=name                run it on the podman of another machine
 #   MEMORY=400m                              memory of the container
+#   Both can be set in tests/.env (see tests/.env.example); the environment of the command wins.
 
 set -eo pipefail
 BASE=${1:-docker.io/library/debian:bookworm}
 cd "$(dirname "$0")/../.."
+
+# tests/.env (KEY=value lines) gives what the environment of the command does not: CONTAINER_CONNECTION, MEMORY...
+if [ -f tests/.env ]; then
+    while IFS='=' read -r key value || [ -n "$key" ]; do
+        case $key in '' | '#'* | *[!A-Za-z0-9_]*) continue ;; esac
+        value=${value%$'\r'}
+        value=${value#[\"\']}
+        value=${value%[\"\']}
+        [ -n "${!key+x}" ] || export "$key=$value"
+    done <tests/.env
+fi
+[ -z "${CONTAINER_CONNECTION:-}" ] || echo "Podman connection: $CONTAINER_CONNECTION"
 DEPS_ENGINE=${DEPS_ENGINE:-$PWD/../opensim-engine/dist}
 DEPS_REST=${DEPS_REST:-$PWD/../opensim-rest-php/dist}
 
