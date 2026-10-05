@@ -40,6 +40,23 @@ COPYFILE_DISABLE=1 tar -chf - -C "$stage" dist deps | podman run --rm -i --memor
 tar -xf - --no-same-owner --warning=no-unknown-keyword -C /
 status=0
 check() { if eval "$2"; then echo "   ok: $1"; else echo "   FAILED: $1"; status=1; fi; }
+# A previous version of a package, which had the libraries bundled as folders of vendor/magicoli (dpkg does not
+# replace a folder by a link when it upgrades): installed in place of the real one
+previous() { # package, libraries
+    local pkg=$1 root lib
+    shift
+    root=/tmp/previous-$pkg
+    rm -rf $root
+    mkdir -p $root/DEBIAN
+    for lib in "$@"; do
+        mkdir -p $root/usr/share/$pkg/vendor/magicoli/$lib
+        : >$root/usr/share/$pkg/vendor/magicoli/$lib/bundled.php
+    done
+    printf "Package: $pkg\nVersion: 0.0.1\nArchitecture: all\nMaintainer: test <test@example.org>\nDescription: previous version, libraries bundled\n" >$root/DEBIAN/control
+    dpkg-deb -b $root /tmp/previous-$pkg.deb >/dev/null
+    dpkg -r $pkg >/dev/null 2>&1
+    dpkg -i /tmp/previous-$pkg.deb >/dev/null 2>&1
+}
 # The helpers served from a folder as an unprivileged user, with a config made by hand from the example (no database)
 start() { # folder, port
     (cd "$1" && runuser -u nobody -- php -S 127.0.0.1:$2 index.php >/tmp/serve-$2.log 2>&1 &)
@@ -74,6 +91,9 @@ configure /usr/share/opensim-helpers
 start /usr/share/opensim-helpers 8091
 check "as an unprivileged user the home page answers" "[ \"\$(http_code 8091 \"\")\" = 200 ] && curl -s http://127.0.0.1:8091/ | grep -q \"Your Grid\""
 check "a URL it does not know is a 404 of its router" "[ \"\$(http_code 8091 nope)\" = 404 ]"
+previous opensim-helpers opensim-engine opensim-rest-php
+dpkg -i /dist/opensim-helpers_*.deb >/dev/null 2>&1
+check "an upgrade from a version that bundled the libraries leaves links, not empty folders" "[ -L /usr/share/opensim-helpers/vendor/magicoli/opensim-engine ] && [ -L /usr/share/opensim-helpers/vendor/magicoli/opensim-rest-php ] && [ -f /usr/share/opensim-helpers/vendor/magicoli/opensim-engine/bootstrap.php ] && [ -f /usr/share/opensim-helpers/vendor/magicoli/opensim-rest-php/class-rest.php ]"
 
 mkdir /tmp/zip && cd /tmp/zip && unzip -q /dist/*.zip
 check "the zip has the helpers and a complete vendor folder" "[ -f opensim-helpers/index.php ] && [ -f opensim-helpers/vendor/twig/twig/src/Environment.php ] && [ -f opensim-helpers/vendor/magicoli/opensim-engine/bootstrap.php ] && [ ! -L opensim-helpers/vendor/magicoli/opensim-engine ]"

@@ -43,3 +43,6 @@ contents:
   - src: /usr/share/opensim-rest-php
     dst: /usr/share/opensim-helpers/vendor/magicoli/opensim-rest-php
     type: symlink
+
+scripts:
+  preinstall: packaging/opensim-helpers.preinst

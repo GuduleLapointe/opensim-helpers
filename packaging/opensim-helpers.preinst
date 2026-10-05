@@ -1,0 +1,19 @@
+#!/bin/sh
+# preinst of opensim-helpers: in older versions the folders of the engine and rest-php of vendor/magicoli were directories of this
+# package (the libraries were bundled), they are links to the packages of those projects now. dpkg does not replace a
+# directory by a link when it upgrades, it leaves the directory empty and the link missing: the old ones are removed
+# before the new files are unpacked.
+set -e
+
+case "$1" in
+    install | upgrade)
+        for name in opensim-engine opensim-rest-php; do
+            dir=/usr/share/opensim-helpers/vendor/magicoli/$name
+            if [ -d "$dir" ] && [ ! -L "$dir" ]; then
+                rm -rf "$dir"
+            fi
+        done
+        ;;
+esac
+
+exit 0
