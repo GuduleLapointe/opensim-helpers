@@ -222,11 +222,12 @@ function xmlrpc_server_call_method($server, $request, $user_data, $output_option
 
     xmlrpc_server_user_data($user_data);
 
-    // Process the request and get the response as a string
+    // As the extension leaves the printing to the methods, what a method prints is the answer, one document: the one of the
+    // library is printed for a method that prints nothing and returns its answer
+    ob_start();
     $response = $server->service($request, true);
-
-    // Output the response directly
-    echo $response;
+    $printed = ob_get_clean();
+    echo $printed !== '' ? $printed : $response;
 
     return true;
 }

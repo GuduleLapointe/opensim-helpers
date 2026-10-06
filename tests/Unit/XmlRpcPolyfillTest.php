@@ -47,6 +47,43 @@ it('serves a method with the signature of the extension, and answers with what i
         ->toBe('the data');
 });
 
+function xmlrpc_prints($method, $params, $app_data)
+{
+    // What query.php and currency.php do: the method prints its answer, as with the extension
+    echo xmlrpc_encode(['success' => true, 'errorMessage' => '']);
+}
+
+it('gives one document when the method prints its own answer, as the extension does', function () {
+    $server = xmlrpc_server_create();
+    xmlrpc_server_register_method($server, 'dir_popular_query', 'xmlrpc_prints');
+
+    $level = ob_get_level();
+    $handler = set_error_handler(static fn() => false);
+    restore_error_handler();
+    ob_start();
+    xmlrpc_server_call_method(
+        $server,
+        '<?xml version="1.0"?><methodCall><methodName>dir_popular_query</methodName><params></params></methodCall>',
+        '',
+    );
+    $response = ob_get_clean();
+    while (ob_get_level() > $level) {
+        ob_end_clean();
+    }
+    if ($handler !== null) {
+        restore_error_handler();
+        restore_error_handler();
+    }
+
+    $document = new DOMDocument();
+    expect(substr_count($response, '<?xml'))
+        ->toBe(1)
+        ->and(@$document->loadXML($response))
+        ->toBeTrue()
+        ->and($response)
+        ->toContain('<name>success</name>');
+});
+
 it('answers a fault for a method that is not registered', function () {
     $server = xmlrpc_server_create();
     ob_start();

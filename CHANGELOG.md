@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+- fix: without ext-xmlrpc, `query.php`, `currency.php` and `landtool.php` answered with two XML documents
 - fix: through the router, the scripts did not see their global variables: `query.php` and `register.php` failed
 - removed: `SEARCH_REGISTRARS`, dead code (the simulators register with their `DATA_SRV_*`)
 
