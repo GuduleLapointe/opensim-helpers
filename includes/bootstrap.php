@@ -37,7 +37,6 @@ $defaults = [
     'OPENSIM_DB' => defined('OPENSIM_DB_HOST'),
     'HYPEVENTS_URL' => 'https://2do.directory/events',
     'SEARCH_TABLE_EVENTS' => 'events',
-    'SEARCH_REGISTRARS' => [],
     'CURRENCY_PROVIDER' => null,
     'CURRENCY_USE_MONEYSERVER' => false,
     'CURRENCY_SCRIPT_KEY' => null,

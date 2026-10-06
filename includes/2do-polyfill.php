@@ -48,12 +48,6 @@ define('SEARCH_DB_USER', $search_db['user'] ?? null);
 define('SEARCH_DB_PASS', $search_db['password'] ?? null);
 define('SEARCH_TABLE_EVENTS', 'events'); // TODO: expose as setting if needed
 
-/**
- * Other registrars to forward hosts registrations.
- * Deprecated since OpenSim 0.9.x, use DATA_SRV_* instead in OpenSim.ini
- */
-define('SEARCH_REGISTRARS', []); // Deprecated
-
 define('HYPEVENTS_URL', preg_replace(':/$:', '', settings('helpers.events_url', 'https://2do.directory/events')));
 
 // --- Grid settings (Robust/Standalone OpenSim server) ---

@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+- removed: `SEARCH_REGISTRARS`, dead code: a simulator registers to several search services with its `DATA_SRV_*`
+
 ### 3.0.0-beta.5
 
 - update: `dev/` runs [build-tools](https://github.com/magicoli/build-tools) instead of its own copy of the scripts

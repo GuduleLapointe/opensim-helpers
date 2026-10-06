@@ -81,10 +81,4 @@ switch ($service) {
         break;
 }
 
-if (is_array(SEARCH_REGISTRARS) & !empty($hostname) & !empty($port) & !empty($service)) {
-    $querystring = getenv('QUERY_STRING');
-    foreach (SEARCH_REGISTRARS as $registrar) {
-        $result = file_get_contents("$registrar?$querystring");
-    }
-}
 die();

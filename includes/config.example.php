@@ -67,20 +67,6 @@ define('SEARCH_DB_USER', OPENSIM_DB_USER);
 define('SEARCH_DB_PASS', OPENSIM_DB_PASS);
 
 /**
- * Other registrars to forward hosts registrations.
- *
- * This method is not needed as with current OpenSim server (0.9.x) which allow
- * specifying multiple registrars, but could be used in the future to implement
- * peer to peer information sharing.
- *
- * @var array
- */
-define('SEARCH_REGISTRARS', [
-    // 'http://2do.directory/helpers/register.php',
-    // 'http://metaverseink.com/cgi-bin/register.py',
-]);
-
-/**
  * Currency database credentials and settings.
  * Needed if currency is enabled on OpenSim server.
  * A dedicated database is recommended, but not mandatory.
