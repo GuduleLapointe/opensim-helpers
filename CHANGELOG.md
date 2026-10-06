@@ -2,6 +2,9 @@
 
 ### Unreleased
 
+- fix: a parcel without picture or group got the ones of the parcel before it in the search tables
+- fix: the search by name gives the second page (`query_start` is a string), and sorts places by traffic
+- fix: an answer of the search without result still has its (empty) list of data, which the module reads
 - fix: without ext-xmlrpc, `query.php`, `currency.php` and `landtool.php` answered with two XML documents
 - fix: through the router, the scripts did not see their global variables: `query.php` and `register.php` failed
 - removed: `SEARCH_REGISTRARS`, dead code (the simulators register with their `DATA_SRV_*`)
