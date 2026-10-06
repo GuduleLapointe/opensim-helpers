@@ -523,10 +523,10 @@ function osXmlResponse($success = true, $errorMessage = false, $data = false)
             'success' => $success,
             'errorMessage' => $errorMessage,
         ];
-        if (!empty($data)) {
+        // A success always has its list, empty when there is no result: the OpenSimSearch module reads it
+        if ($success || !empty($data)) {
             $array['data'] = $data;
         }
-        array_filter($array);
         $response_xml = xmlrpc_encode($array); // phpcs:ignore PHPCompatibility.FunctionUse.RemovedFunctions
         echo $response_xml;
         return;
