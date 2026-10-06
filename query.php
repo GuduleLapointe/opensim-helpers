@@ -55,10 +55,9 @@ function dir_places_query($method_name, $params, $app_data)
     $flags = $req['flags'];
     $text = $req['text'];
     $category = isset($req['category']) ? $req['category'] : null;
-    $query_start = $req['query_start'];
-    if (!is_int($query_start)) {
-        $query_start = 0;
-    }
+    $query_start = $req['query_start'] ?? 0;
+    // The page, as a number: the module sends it as a string, and it goes into the SQL
+    $query_start = max(0, (int) $query_start);
 
     $pieces = explode(' ', $text);
     array_filter($pieces);
@@ -85,7 +84,6 @@ function dir_places_query($method_name, $params, $app_data)
 
     $values = [
         ':text' => $text,
-        ':order' => $order,
         ':cat' => $category,
     ];
     $gatekeeperURL = ossearch_get_gatekeeperURL();
@@ -100,7 +98,7 @@ function dir_places_query($method_name, $params, $app_data)
             ' AS r ON parcels.regionUUID = r.regionUUID
     WHERE ' .
             join(' AND ', $terms) .
-            " ORDER BY :order LIMIT $query_start,101",
+            " ORDER BY $order LIMIT $query_start,101",
         $values,
     );
 
@@ -133,9 +131,9 @@ function dir_popular_query($method_name, $params, $app_data)
     global $SearchDB;
 
     $req = $params[0];
-    $text = $req['text'];
+    $text = $req['text'] ?? '';
     $flags = $req['flags'];
-    $query_start = $req['query_start'];
+    $query_start = $req['query_start'] ?? 0;
     $include_hypergrid = isset($req['include_hypergrid']) && $req['include_hypergrid'] == 'false' ? false : true;
     $include_landsales = isset($req['include_landsales']) && $req['include_landsales'] == 'true' ? true : false;
 
@@ -172,10 +170,8 @@ function dir_popular_query($method_name, $params, $app_data)
         $where = '';
     }
 
-    // Prevent SQL injection by checking that $query_start is a number
-    if (!is_int($query_start)) {
-        $query_start = 0;
-    }
+    // The page, as a number: the module sends it as a string, and it goes into the SQL
+    $query_start = max(0, (int) $query_start);
 
     $sql =
         'SELECT pop.infoUUID, pop.name, pop.dwell, pop.gatekeeperURL, r.regionname, r.regionUUID, par.landingpoint, par.imageUUID FROM popularplaces as pop
@@ -223,7 +219,7 @@ function dir_land_query($method_name, $params, $app_data)
     $type = $req['type'];
     $price = $req['price'];
     $area = $req['area'];
-    $query_start = $req['query_start'];
+    $query_start = $req['query_start'] ?? 0;
 
     $terms = [];
     $sqldata = [];
@@ -283,10 +279,8 @@ function dir_land_query($method_name, $params, $app_data)
         $where = '';
     }
 
-    // Prevent SQL injection by checking that $query_start is a number
-    if (!is_int($query_start)) {
-        $query_start = 0;
-    }
+    // The page, as a number: the module sends it as a string, and it goes into the SQL
+    $query_start = max(0, (int) $query_start);
 
     $sql = "SELECT *,saleprice/area AS lsq FROM parcelsales $where ORDER BY " . $order . " LIMIT $query_start,101";
     $query = $SearchDB->prepare($sql);
@@ -319,9 +313,9 @@ function dir_events_query($method_name, $params, $app_data)
     global $SearchDB;
     $req = $params[0];
 
-    $text = $req['text'];
+    $text = $req['text'] ?? '';
     $flags = $req['flags'];
-    $query_start = $req['query_start'];
+    $query_start = $req['query_start'] ?? 0;
 
     if ($text == '%%%') {
         $response_xml = xmlrpc_encode([
@@ -403,10 +397,8 @@ function dir_events_query($method_name, $params, $app_data)
         $where = '';
     }
 
-    // Prevent SQL injection by checking that $query_start is a number
-    if (!is_int($query_start)) {
-        $query_start = 0;
-    }
+    // The page, as a number: the module sends it as a string, and it goes into the SQL
+    $query_start = max(0, (int) $query_start);
 
     $sql =
         'SELECT owneruuid,name,eventid,dateUTC,eventflags,globalPos' .
@@ -454,7 +446,7 @@ function dir_classified_query($method_name, $params, $app_data)
     $text = $req['text'];
     $flags = $req['flags'];
     $category = $req['category'];
-    $query_start = $req['query_start'];
+    $query_start = $req['query_start'] ?? 0;
 
     if ($text == '%%%') {
         osXmlResponse(false, 'Invalid search terms', []);
@@ -496,10 +488,8 @@ function dir_classified_query($method_name, $params, $app_data)
         $where = '';
     }
 
-    // Prevent SQL injection by checking that $query_start is a number
-    if (!is_int($query_start)) {
-        $query_start = 0;
-    }
+    // The page, as a number: the module sends it as a string, and it goes into the SQL
+    $query_start = max(0, (int) $query_start);
 
     $sql = "SELECT * FROM classifieds $where ORDER BY priceforlisting DESC LIMIT $query_start,101";
     $query = $OpenSimDB->prepareAndExecute($sql, $sqldata);
