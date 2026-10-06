@@ -143,7 +143,13 @@ class OpenSim_Helpers_Router
         ];
     }
 
-    /** Answer the current request. */
+    /**
+     * Answer the current request: a page or an asset is answered here, a script is given back for the entry to include. It
+     * has to run in the global scope, as when the web server calls it: the scripts keep the database and the settings in
+     * global variables ($SearchDB...) that their functions read.
+     *
+     * @return string|null The script to include, none when the request is answered.
+     */
     public static function run()
     {
         $own = defined('OPENSIM_ROUTES') ? OPENSIM_ROUTES : [];
@@ -153,7 +159,7 @@ class OpenSim_Helpers_Router
             header('Content-Type: text/plain; charset=utf-8');
             echo "Not found\n";
 
-            return;
+            return null;
         }
         [$kind, $what] = $found;
         $root = dirname(__DIR__);
@@ -167,27 +173,28 @@ class OpenSim_Helpers_Router
                 header('Content-Type: text/html; charset=utf-8');
                 echo self::render($what, self::context(), $dirs);
 
-                return;
+                return null;
             case 'asset':
                 $file = "$root/assets/$what";
                 $type = self::MIME[strtolower(pathinfo($file, PATHINFO_EXTENSION))] ?? null;
                 if ($type === null || !is_file($file)) {
                     http_response_code(404);
 
-                    return;
+                    return null;
                 }
                 header("Content-Type: $type");
                 header('Cache-Control: public, max-age=86400');
                 readfile($file);
 
-                return;
+                return null;
             default:
                 // The scripts expect their own folder as the working one
                 chdir($root);
                 $_SERVER['SCRIPT_NAME'] = '/' . $what;
                 $_SERVER['SCRIPT_FILENAME'] = "$root/$what";
                 $_SERVER['PHP_SELF'] = '/' . $what;
-                require $root . '/' . $what;
+
+                return $root . '/' . $what;
         }
     }
 }

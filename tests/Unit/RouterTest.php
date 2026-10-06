@@ -48,6 +48,24 @@ describe('Router', function () {
             ->toBeNull();
     });
 
+    test('gives a script back to the entry, which includes it in the global scope', function () {
+        $_SERVER['REQUEST_URI'] = '/helpers/query.php';
+        $cwd = getcwd();
+        $script = OpenSim_Helpers_Router::run();
+        chdir($cwd);
+
+        expect($script)->toBe(dirname(__DIR__, 2) . '/query.php');
+    });
+
+    test('answers a page itself and gives nothing back', function () {
+        $_SERVER['REQUEST_URI'] = '/nothing';
+        ob_start();
+        $script = OpenSim_Helpers_Router::run();
+        ob_end_clean();
+
+        expect($script)->toBeNull();
+    });
+
     test('renders a page, a customized template wins', function () {
         $context = [
             'grid_name' => 'Alpha <b>',

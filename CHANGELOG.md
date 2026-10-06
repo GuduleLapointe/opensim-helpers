@@ -2,7 +2,8 @@
 
 ### Unreleased
 
-- removed: `SEARCH_REGISTRARS`, dead code: a simulator registers to several search services with its `DATA_SRV_*`
+- fix: through the router, the scripts did not see their global variables: `query.php` and `register.php` failed
+- removed: `SEARCH_REGISTRARS`, dead code (the simulators register with their `DATA_SRV_*`)
 
 ### 3.0.0-beta.5
 
