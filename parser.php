@@ -187,6 +187,7 @@ function hostScan($hostname, $port, $xmlcontent)
 
             // The image tag will only exist if the parcel has a snapshot image
             $has_picture = 0;
+            $image = NULL_KEY;
             $image_node = $parcel->getElementsByTagName('image');
             if ($image_node->length > 0) {
                 $image = $image_node->item(0)->nodeValue;
@@ -202,6 +203,7 @@ function hostScan($hostname, $port, $xmlcontent)
             $ownerUUID = $owner->getElementsByTagName('uuid')->item(0)->nodeValue;
 
             // Adding support for groups
+            $groupUUID = NULL_KEY;
             $group = $parcel->getElementsByTagName('group')->item(0);
             if ($group) {
                 $groupUUID = $group->getElementsByTagName('groupuuid')->item(0)->nodeValue;
